@@ -1,5 +1,8 @@
 ﻿using CounterStrikeSharp.API.Core;
 using IGDiscord.Models;
+using System.Net.Http.Headers;
+using System.Text;
+using System;
 using System.Text.Json;
 
 namespace IGDiscord;
@@ -20,7 +23,16 @@ public class IGDiscordPlugin : BasePlugin
 
     public override void Load(bool hotReload)
     {
-        GetOrCreateConfig();
+        GetOrCreateConfig(); 
+        
+        if (_config != null)
+        {
+            // Config loaded, do stuff
+        }
+        else
+        {
+            // Config didn't load, display error message
+        };
     }
 
     private void GetOrCreateConfig()
