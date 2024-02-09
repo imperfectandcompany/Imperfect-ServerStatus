@@ -1,3 +1,7 @@
 .vs/
 bin/
 obj/
+Publish/
+Properties/
+Release/
+*.user
