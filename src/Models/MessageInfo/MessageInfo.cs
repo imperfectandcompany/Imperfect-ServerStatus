@@ -2,7 +2,7 @@
 {
     public class MessageInfo
     {
-        public required string Type { get; set; }
+        public required string MessageType { get; set; }
 
         /// <summary>
         /// Prefix of message posted to Discord
