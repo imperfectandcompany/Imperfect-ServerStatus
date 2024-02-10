@@ -4,7 +4,7 @@
     {
         public string Url { get; set; }
 
-        public string? Proxy_Url { get; set; }
+        public string? ProxyUrl { get; set; }
 
         public int? Height { get; set; }
 
