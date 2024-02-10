@@ -1,9 +1,6 @@
 ﻿using CounterStrikeSharp.API.Core;
-using IGDiscord.Models;
-using IGDiscord.Models.Discord;
-using IGDiscord.src.Models.Messages;
-using System.Net.Http.Headers;
-using System.Text;
+using IGDiscord.Models.Messages;
+using IGDiscord.src.Services;
 using System.Text.Json;
 
 namespace IGDiscord;
@@ -16,11 +13,11 @@ public class IGDiscordPlugin : BasePlugin
     public override string ModuleDescription => "Plugin for Discord Webhooks for Imperfect Gamers";
 
     private static Config? _config;
-    private static readonly HttpClient _httpClient;
+    private static readonly DiscordService _discordService;
 
     static IGDiscordPlugin()
     {
-        _httpClient = new HttpClient();
+        _discordService = new DiscordService();
     }
 
     public override void Unload(bool hotReload)
@@ -40,7 +37,7 @@ public class IGDiscordPlugin : BasePlugin
             {
                 Task.Run(async () =>
                 {
-                    await SendServerStatusMessage(serverStatusMessage);
+                    await _discordService.SendServerStatusMessage(serverStatusMessage);
                 });
             }
         }
@@ -48,36 +45,6 @@ public class IGDiscordPlugin : BasePlugin
         {
             Console.WriteLine("The config file did not load correctly. Please check that there is a config.json file in the plugin directory.");
         };
-    }
-
-    private async Task SendServerStatusMessage(ServerStatusMessageInfo messageInfo)
-    {
-        var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(messageInfo.LogInterval));
-
-        Console.WriteLine("Sending server status");
-
-        var message = messageInfo.Prefix + "Server status";
-
-        while (await periodicTimer.WaitForNextTickAsync())
-        {
-            await SendDiscordWebhookMessage(message, messageInfo.WebhookUri);
-        }
-    }
-
-    private async Task SendDiscordWebhookMessage(string message, string webhookUri)
-    {
-        try
-        {
-            var body = JsonSerializer.Serialize(new { content = message });
-            var content = new StringContent(body, Encoding.UTF8, "application/json");
-            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            HttpResponseMessage response = (await _httpClient.PostAsync($"{webhookUri}", content)).EnsureSuccessStatusCode();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Failed to send: {ex.Message}");
-        }
     }
 
     private void GetOrCreateConfig()
