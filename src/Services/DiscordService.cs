@@ -60,7 +60,7 @@ namespace IGDiscord.Services
                 var content = new StringContent(serializedMessage, Encoding.UTF8, "application/json");
                 _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                HttpResponseMessage response = (await _httpClient.PostAsync($"{webhookUri}", content)).EnsureSuccessStatusCode();
+                HttpResponseMessage response = (await _httpClient.PostAsync($"{webhookUri}?wait=true", content)).EnsureSuccessStatusCode();
             }
             catch (Exception ex)
             {
