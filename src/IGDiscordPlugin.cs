@@ -1,6 +1,8 @@
 ﻿using CounterStrikeSharp.API.Core;
 using IGDiscord.Models.Messages;
-using IGDiscord.src.Services;
+using IGDiscord.Models;
+using IGDiscord.Services;
+using IGDiscord.Utils;
 using System.Text.Json;
 
 namespace IGDiscord;
@@ -43,7 +45,7 @@ public class IGDiscordPlugin : BasePlugin
         }
         else
         {
-            Console.WriteLine("The config file did not load correctly. Please check that there is a config.json file in the plugin directory.");
+            Util.PrintLog("The config file did not load correctly. Please check that there is a config.json file in the plugin directory.");
         };
     }
 
@@ -74,11 +76,15 @@ public class IGDiscordPlugin : BasePlugin
             var serializedConfigData = JsonSerializer.Serialize(configData, jsonOptions);
             File.WriteAllText(configPath, serializedConfigData);
 
+            Util.PrintLog("Created config.json file");
+
             _config = configData;
         }
         else
         {
             var configData = File.ReadAllText(configPath);
+
+            Util.PrintLog("Read config.json file");
 
             _config = JsonSerializer.Deserialize<Config>(configData);
         }
