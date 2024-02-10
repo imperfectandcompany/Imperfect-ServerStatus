@@ -1,5 +1,7 @@
 ﻿using CounterStrikeSharp.API.Core;
 using IGDiscord.Models;
+using IGDiscord.Models.Discord;
+using IGDiscord.src.Models.Messages;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -32,15 +34,14 @@ public class IGDiscordPlugin : BasePlugin
 
         if (_config != null)
         {
-            if (_config.Webhooks != null)
+            var serverStatusMessage = _config.ServerStatusMessage;
+
+            if (serverStatusMessage != null)
             {
-                foreach (var webhook in _config.Webhooks)
+                Task.Run(async () =>
                 {
-                    Task.Run(async () =>
-                    {
-                        await SendDiscordMessage(_config.LogInterval, webhook);
-                    });
-                }
+                    await SendServerStatusMessage(serverStatusMessage);
+                });
             }
         }
         else
@@ -49,29 +50,33 @@ public class IGDiscordPlugin : BasePlugin
         };
     }
 
-    private async Task SendDiscordMessage(int interval, Webhook webhook)
+    private async Task SendServerStatusMessage(ServerStatusMessageInfo messageInfo)
     {
-        var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(interval));
+        var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(messageInfo.LogInterval));
+
+        Console.WriteLine("Sending server status");
+
+        var message = messageInfo.Prefix + "Server status";
 
         while (await periodicTimer.WaitForNextTickAsync())
         {
-            Console.WriteLine("Sending server status");
+            await SendDiscordWebhookMessage(message, messageInfo.WebhookUri);
+        }
+    }
 
-            var message = webhook.MessagePrefix + "Server status";
+    private async Task SendDiscordWebhookMessage(string message, string webhookUri)
+    {
+        try
+        {
+            var body = JsonSerializer.Serialize(new { content = message });
+            var content = new StringContent(body, Encoding.UTF8, "application/json");
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            try
-            {
-                var body = JsonSerializer.Serialize(new { content = message });
-                var content = new StringContent(body, Encoding.UTF8, "application/json");
-                _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                HttpResponseMessage response = (await _httpClient.PostAsync($"{webhook.WebHookUri}", content)).EnsureSuccessStatusCode();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Failed to send: {ex.Message}");
-            }
-
+            HttpResponseMessage response = (await _httpClient.PostAsync($"{webhookUri}", content)).EnsureSuccessStatusCode();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to send: {ex.Message}");
         }
     }
 
@@ -84,16 +89,13 @@ public class IGDiscordPlugin : BasePlugin
             // This is the first time running this plugin, create the config file
             var configData = new Config()
             {
-                Webhooks = new List<Webhook>()
+                ServerStatusMessage = new ServerStatusMessageInfo()
                 {
-                    new Webhook()
-                    {
-                        Type = Constants.WebhookType.ServerStatus,
-                        MessagePrefix = "### SAMPLE SERVER STATUS MESSAGE PREFIX ###",
-                        WebHookUri = "https://discord.com/api/webhooks/###############/#################",
-                    }
-                },
-                LogInterval = 300
+                    Type = Constants.MessageType.ServerStatus,
+                    Prefix = "### SAMPLE SERVER STATUS MESSAGE PREFIX ###",
+                    WebhookUri = "https://discord.com/api/webhooks/###############/#################",
+                    LogInterval = 300
+                }
             };
 
             var jsonOptions = new JsonSerializerOptions

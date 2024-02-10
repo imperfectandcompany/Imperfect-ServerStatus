@@ -11,13 +11,8 @@ namespace IGDiscord
         public override int Version { get; set; } = 1;
 
         /// <summary>
-        /// List of Webhook URL's and prefixes for Discord messages
+        /// Server status message information
         /// </summary>
-        public List<Webhook>? Webhooks { get; set; }
-
-        /// <summary>
-        /// Interval in seconds that this Webhook is called
-        /// </summary>
-        public int LogInterval { get; set; }
+        public required ServerStatusMessageInfo ServerStatusMessage { get; set; }
     }
 }
