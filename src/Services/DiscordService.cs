@@ -1,6 +1,6 @@
 ﻿using IGDiscord.Helpers;
 using IGDiscord.Models.Discord;
-using IGDiscord.Models.Messages;
+using IGDiscord.Models.MessageInfo;
 using IGDiscord.src.Models.Discord;
 using IGDiscord.Utils;
 using System.Net.Http.Headers;

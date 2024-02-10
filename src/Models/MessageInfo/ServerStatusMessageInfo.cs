@@ -1,6 +1,4 @@
-﻿using IGDiscord.Models.Messages;
-
-namespace IGDiscord.Models.Messages
+﻿namespace IGDiscord.Models.MessageInfo
 {
     public class ServerStatusMessageInfo : MessageInfo
     {

@@ -1,5 +1,5 @@
 ﻿using CounterStrikeSharp.API.Core;
-using IGDiscord.Models.Messages;
+using IGDiscord.Models.MessageInfo;
 
 namespace IGDiscord.Models
 {

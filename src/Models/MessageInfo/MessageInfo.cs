@@ -1,4 +1,4 @@
-﻿namespace IGDiscord.Models.Messages
+﻿namespace IGDiscord.Models.MessageInfo
 {
     public class MessageInfo
     {
