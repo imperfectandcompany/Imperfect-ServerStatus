@@ -45,7 +45,7 @@ public class IGDiscordPlugin : BasePlugin
         }
         else
         {
-            Util.PrintLog("The config file did not load correctly. Please check that there is a config.json file in the plugin directory.");
+            Util.PrintError("The config file did not load correctly. Please check that there is a config.json file in the plugin directory.");
         };
     }
 

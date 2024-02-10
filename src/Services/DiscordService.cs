@@ -64,7 +64,7 @@ namespace IGDiscord.Services
             }
             catch (Exception ex)
             {
-                Util.PrintLog($"Failed to send: {ex.Message}");
+                Util.PrintError($"Failed to send: {ex.Message}");
             }
         }
 
@@ -79,7 +79,7 @@ namespace IGDiscord.Services
             }
             catch (Exception ex)
             {
-                Util.PrintLog($"Failed to send: {ex.Message}");
+                Util.PrintError($"Failed to send: {ex.Message}");
             }
         }
 
