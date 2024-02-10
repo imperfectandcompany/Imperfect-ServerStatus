@@ -9,4 +9,5 @@
         public string? Icon_Url { get; set; }
 
         public string? Proxy_Icon_Url { get; set; }
+    }
 }

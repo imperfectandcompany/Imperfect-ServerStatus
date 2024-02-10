@@ -1,12 +1,6 @@
-﻿using IGDiscord.Models;
-using IGDiscord.src.Models.Messages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using IGDiscord.Models.Messages;
 
-namespace IGDiscord.Models
+namespace IGDiscord.Models.Messages
 {
     public class ServerStatusMessageInfo : MessageInfo
     {
