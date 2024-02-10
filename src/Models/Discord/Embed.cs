@@ -10,7 +10,7 @@
 
         public string? Url { get; set; }
 
-        public DateOnly Timestamp { get; set; }
+        public DateTime Timestamp { get; set; }
 
         public int? Color  { get; set; }
 
