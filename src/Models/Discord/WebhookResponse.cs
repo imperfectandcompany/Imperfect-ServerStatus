@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IGDiscord.src.Models.Discord
+namespace IGDiscord.Models.Discord
 {
     internal class WebhookResponse
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
     }
 }
