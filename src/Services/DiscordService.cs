@@ -1,5 +1,8 @@
-﻿using IGDiscord.Models.Discord;
+﻿using IGDiscord.Helpers;
+using IGDiscord.Models.Discord;
 using IGDiscord.Models.Messages;
+using IGDiscord.src.Models.Discord;
+using IGDiscord.Utils;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -18,37 +21,57 @@ namespace IGDiscord.Services
         {
             var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(messageInfo.MessageInterval));
 
-            Embed message = CreateServerStatusMessageEmbed(messageInfo);
+            WebhookMessage discordWebhookMessage = CreateServerStatusWebhookMessage(messageInfo);
+
+            /// Initial post
+            await PostEmbedToWebhook(discordWebhookMessage, messageInfo.WebhookUri);
 
             while (await periodicTimer.WaitForNextTickAsync())
             {
-                await SendWebhookMessage(message, messageInfo.WebhookUri);
+                await PostEmbedToWebhook(discordWebhookMessage, messageInfo.WebhookUri);
             }
         }
 
-        public async Task SendWebhookMessage(Embed message, string webhookUri)
+        public async Task PostEmbedToWebhook(WebhookMessage discordWebhookMessage, string webhookUri)
         {
             try
             {
-                var body = JsonSerializer.Serialize(new { content = message });
+                var serializeOptions = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance
+                };
+
+                var body = JsonSerializer.Serialize(discordWebhookMessage, serializeOptions);
+
+                Util.PrintLog(body);
+
                 var content = new StringContent(body, Encoding.UTF8, "application/json");
                 _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                 HttpResponseMessage response = (await _httpClient.PostAsync($"{webhookUri}", content)).EnsureSuccessStatusCode();
 
-                Console.WriteLine("Sent server status message");
+                Util.PrintLog("Sent server status message");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to send: {ex.Message}");
+                Util.PrintLog($"Failed to send: {ex.Message}");
             }
         }
 
-        private Embed CreateServerStatusMessageEmbed(ServerStatusMessageInfo messageInfo)
+        private WebhookMessage CreateServerStatusWebhookMessage(ServerStatusMessageInfo messageInfo)
         {
-            return new Embed{
-                Title = "Server Status Title",
-                Description = "This is where the description of the server status will go."
+            return new WebhookMessage
+            {
+                Content = "",
+                Embeds = new List<Embed>
+                {
+                    new Embed
+                    {
+                        Title = "Server Status Title",
+                        Description = "This is where the description of the server status will go.",
+                        Timestamp = DateOnly.FromDateTime(DateTime.Now)
+                    }
+                }
             };
         }
     }
