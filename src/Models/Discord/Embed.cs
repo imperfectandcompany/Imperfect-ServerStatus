@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace IGDiscord.src.Models.Discord
+namespace IGDiscord.Models.Discord
 {
     public class Embed
     {

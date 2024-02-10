@@ -1,4 +1,4 @@
-﻿namespace IGDiscord.src.Models.Discord
+﻿namespace IGDiscord.Models.Discord
 {
     public class EmbedFooter
     {
