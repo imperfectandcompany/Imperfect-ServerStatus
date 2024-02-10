@@ -32,7 +32,6 @@ public class IGDiscordPlugin : BasePlugin
 
         if (_config != null)
         {
-
             if (_config.Webhooks != null)
             {
                 foreach (var webhook in _config.Webhooks)
@@ -66,7 +65,7 @@ public class IGDiscordPlugin : BasePlugin
                 var content = new StringContent(body, Encoding.UTF8, "application/json");
                 _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                HttpResponseMessage response = (await _httpClient.PostAsync($"{webhook.WebHookUrl}", content)).EnsureSuccessStatusCode();
+                HttpResponseMessage response = (await _httpClient.PostAsync($"{webhook.WebHookUri}", content)).EnsureSuccessStatusCode();
             }
             catch (Exception ex)
             {
@@ -89,8 +88,9 @@ public class IGDiscordPlugin : BasePlugin
                 {
                     new Webhook()
                     {
-                        MessagePrefix = "### SAMPLE MESSAGE PREFIX ###",
-                        WebHookUrl = "https://discord.com/api/webhooks/###############/#################",
+                        Type = Constants.WebhookType.ServerStatus,
+                        MessagePrefix = "### SAMPLE SERVER STATUS MESSAGE PREFIX ###",
+                        WebHookUri = "https://discord.com/api/webhooks/###############/#################",
                     }
                 },
                 LogInterval = 300
@@ -103,7 +103,6 @@ public class IGDiscordPlugin : BasePlugin
             };
 
             var serializedConfigData = JsonSerializer.Serialize(configData, jsonOptions);
-
             File.WriteAllText(configPath, serializedConfigData);
 
             _config = configData;
