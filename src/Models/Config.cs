@@ -1,7 +1,7 @@
 ﻿using CounterStrikeSharp.API.Core;
 using IGDiscord.Models.Messages;
 
-namespace IGDiscord
+namespace IGDiscord.Models
 {
     public class Config : BasePluginConfig
     {
