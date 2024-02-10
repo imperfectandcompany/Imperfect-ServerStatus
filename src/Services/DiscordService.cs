@@ -4,7 +4,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
-namespace IGDiscord.src.Services
+namespace IGDiscord.Services
 {
     public class DiscordService
     {
@@ -16,7 +16,7 @@ namespace IGDiscord.src.Services
         }
         public async Task SendServerStatusMessage(ServerStatusMessageInfo messageInfo)
         {
-            var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(messageInfo.LogInterval));
+            var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(messageInfo.MessageInterval));
 
             Embed message = CreateServerStatusMessageEmbed(messageInfo);
 

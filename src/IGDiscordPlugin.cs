@@ -61,7 +61,7 @@ public class IGDiscordPlugin : BasePlugin
                     Type = Constants.MessageType.ServerStatus,
                     Prefix = "### SAMPLE SERVER STATUS MESSAGE PREFIX ###",
                     WebhookUri = "https://discord.com/api/webhooks/###############/#################",
-                    LogInterval = 300
+                    MessageInterval = 300
                 }
             };
 
