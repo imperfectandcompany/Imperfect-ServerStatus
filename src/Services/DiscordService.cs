@@ -1,7 +1,6 @@
 ﻿using IGDiscord.Helpers;
 using IGDiscord.Models.Discord;
 using IGDiscord.Models.MessageInfo;
-using IGDiscord.src.Models.Discord;
 using IGDiscord.Utils;
 using System.Net.Http.Headers;
 using System.Text;
@@ -27,7 +26,7 @@ namespace IGDiscord.Services
             };
 
             var jsonSerializedMessage = JsonSerializer.Serialize(discordWebhookMessage, serializeOptions);
-
+                
             if (string.IsNullOrEmpty(messageInfo.MessageId))
             {
                 var serializedMessage = JsonSerializer.Serialize(discordWebhookMessage, serializeOptions);
@@ -73,10 +72,12 @@ namespace IGDiscord.Services
 
         private async Task<string> GetDiscordMessageId(HttpResponseMessage response)
         {
-            var deserializedResponse = JsonSerializer.Deserialize<WebhookResponse>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+            var deserializedResponse = JsonSerializer.Deserialize<WebhookResponse>(
+                await response.Content.ReadAsStringAsync(),
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
 
             if (deserializedResponse != null
                 && !string.IsNullOrEmpty(deserializedResponse.Id))
