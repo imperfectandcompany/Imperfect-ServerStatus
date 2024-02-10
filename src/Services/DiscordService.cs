@@ -1,6 +1,7 @@
 ﻿using IGDiscord.Helpers;
 using IGDiscord.Models.Discord;
 using IGDiscord.Models.MessageInfo;
+using IGDiscord.src.Models.Discord;
 using IGDiscord.Utils;
 using System.Net.Http.Headers;
 using System.Text;
@@ -61,10 +62,30 @@ namespace IGDiscord.Services
                 _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                 HttpResponseMessage response = (await _httpClient.PostAsync($"{webhookUri}?wait=true", content)).EnsureSuccessStatusCode();
+
+                var messageId = GetDiscordMessageId(response);
             }
             catch (Exception ex)
             {
                 Util.PrintError($"Failed to send: {ex.Message}");
+            }
+        }
+
+        private async Task<string> GetDiscordMessageId(HttpResponseMessage response)
+        {
+            var deserializedResponse = JsonSerializer.Deserialize<WebhookResponse>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            if (deserializedResponse != null
+                && !string.IsNullOrEmpty(deserializedResponse.Id))
+            {
+                return deserializedResponse.Id;
+            }
+            else
+            {
+                return string.Empty;
             }
         }
 
