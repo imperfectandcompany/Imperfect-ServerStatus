@@ -1,5 +1,6 @@
 ﻿using CounterStrikeSharp.API.Core;
 using IGDiscord.Models.MessageInfo;
+using System.Text.Json.Serialization;
 
 namespace IGDiscord.Models
 {
@@ -8,11 +9,12 @@ namespace IGDiscord.Models
         /// <summary>
         /// Config version number
         /// </summary>
+        [JsonPropertyName("ConfigVersion")]
         public override int Version { get; set; } = 1;
 
         /// <summary>
         /// Server status message information
         /// </summary>
-        public required StatusMessageInfo ServerStatusMessage { get; set; }
+        public StatusMessageInfo ServerStatusMessage { get; set; }
     }
 }
