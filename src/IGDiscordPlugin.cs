@@ -15,14 +15,8 @@ public class IGDiscordPlugin : BasePlugin
     public override string ModuleDescription => "Plugin for Discord Webhooks for Imperfect Gamers";
 
     public Config? _config;
-    private readonly DiscordService _discordService;
-    private readonly ConfigService _configService;
-
-    public IGDiscordPlugin()
-    {
-        _discordService = new DiscordService();
-        _configService = new ConfigService();
-    }
+    private DiscordService _discordService;
+    private ConfigService _configService;
 
     public override void Unload(bool hotReload)
     {
@@ -31,19 +25,17 @@ public class IGDiscordPlugin : BasePlugin
 
     public override void Load(bool hotReload)
     {
+        _configService = new ConfigService(ModuleDirectory);
+        _discordService = new DiscordService(_configService);
+
         _config = _configService.LoadConfig(ModuleDirectory);
 
         if (_config != null)
         {
-            var serverStatusMessage = _config.ServerStatusMessage;
-
-            if (serverStatusMessage != null)
+            Task.Run(async () =>
             {
-                Task.Run(async () =>
-                {
-                    await _discordService.SendServerStatusMessage(serverStatusMessage);
-                });
-            }
+                await _discordService.SendServerStatusMessage(_config);
+            });
         }
         else
         {
