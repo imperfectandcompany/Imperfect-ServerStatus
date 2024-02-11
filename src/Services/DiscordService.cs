@@ -1,4 +1,5 @@
 ﻿using IGDiscord.Helpers;
+using IGDiscord.Models;
 using IGDiscord.Models.Discord;
 using IGDiscord.Models.MessageInfo;
 using IGDiscord.Utils;
@@ -10,33 +11,45 @@ namespace IGDiscord.Services
 {
     public class DiscordService
     {
-        private static readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClient;
+        private readonly ConfigService _configService;
+        private Config? _config;
 
-        static DiscordService()
+        public DiscordService(ConfigService configService)
         {
             _httpClient = new HttpClient();
+            _configService = configService;
         }
-        public async Task SendServerStatusMessage(ServerStatusMessageInfo messageInfo)
+
+        public async Task SendServerStatusMessage(Config config)
         {
-            WebhookMessage discordWebhookMessage = CreateMessage(messageInfo);
-
-            var serializeOptions = new JsonSerializerOptions
+            if (config == null)
             {
-                PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance
-            };
-
-            var jsonSerializedMessage = JsonSerializer.Serialize(discordWebhookMessage, serializeOptions);
-                
-            if (string.IsNullOrEmpty(messageInfo.MessageId))
-            {
-                var serializedMessage = JsonSerializer.Serialize(discordWebhookMessage, serializeOptions);
-
-                /// No message exists, send first message
-                await PostJsonToWebhook(serializedMessage, messageInfo.WebhookUri);
+                Util.PrintError($"Something went wrong with parsing the config.");
             }
             else
             {
-                /// Message already exists, update it periodically
+                _config = config;
+            }
+
+            var messageInfo = _config.ServerStatusMessage;
+
+            if (messageInfo != null)
+            {
+                WebhookMessage discordWebhookMessage = CreateMessage(messageInfo);
+
+                var serializeOptions = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance
+                };
+
+                if (string.IsNullOrEmpty(messageInfo.MessageId))
+                {
+                    var serializedMessage = JsonSerializer.Serialize(discordWebhookMessage, serializeOptions);
+
+                    /// No message exists, send first message
+                    await PostJsonToWebhook(serializedMessage, messageInfo);
+                }
 
                 /// Add message ID to Webhook URI
                 messageInfo.WebhookUri = messageInfo.WebhookUri + "/messages/" + messageInfo.MessageId;
