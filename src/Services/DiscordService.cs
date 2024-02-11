@@ -13,10 +13,10 @@ namespace IGDiscord.Services
     public class DiscordService : IDiscordService
     {
         private readonly HttpClient _httpClient;
-        private readonly ConfigService _configService;
+        private readonly IConfigService _configService;
         private Config? _config;
 
-        public DiscordService(ConfigService configService)
+        public DiscordService(IConfigService configService)
         {
             _httpClient = new HttpClient();
             _configService = configService;
