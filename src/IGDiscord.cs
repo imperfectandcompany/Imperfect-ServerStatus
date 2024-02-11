@@ -56,18 +56,15 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
 
     public void OnConfigParsed(Config config)
     {
-        if (config.ServerStatusMessage == null)
+        if (config.StatusMessageInfo == null)
         {
-            config.ServerStatusMessage = new StatusMessageInfo()
+            config.StatusMessageInfo = new StatusMessageInfo()
             {
                 MessageType = Constants.MessageType.ServerStatus,
-                Prefix = "### SAMPLE SERVER STATUS MESSAGE PREFIX ###",
                 WebhookUri = "https://discord.com/api/webhooks/###############/#################",
                 MessageInterval = 300
             };
         }
-
-        ConfigManager.Load<Config>(ModuleName);
 
         Config = config;
     }

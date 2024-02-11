@@ -33,7 +33,7 @@ namespace IGDiscord.Services
                 _config = config;
             }
 
-            var messageInfo = _config.ServerStatusMessage;
+            var messageInfo = _config.StatusMessageInfo;
 
             if (messageInfo != null)
             {
@@ -78,7 +78,7 @@ namespace IGDiscord.Services
 
                 messageInfo.MessageId = await GetDiscordMessageId(response);
 
-                _config.ServerStatusMessage = messageInfo;
+                _config.StatusMessageInfo = messageInfo;
                 _configService.UpdateConfig(_config);
             }
             catch (Exception ex)

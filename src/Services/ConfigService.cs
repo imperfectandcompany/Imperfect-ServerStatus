@@ -54,10 +54,9 @@ namespace IGDiscord.Services
             {
                 var configData = new Config()
                 {
-                    ServerStatusMessage = new StatusMessageInfo()
+                    StatusMessageInfo = new StatusMessageInfo()
                     {
                         MessageType = Constants.MessageType.ServerStatus,
-                        Prefix = "### SAMPLE SERVER STATUS MESSAGE PREFIX ###",
                         WebhookUri = "https://discord.com/api/webhooks/###############/#################",
                         MessageInterval = 300
                     }
@@ -73,7 +72,7 @@ namespace IGDiscord.Services
                 File.WriteAllText(configPath, serializedConfigData);
 
                 _config = configData;
-                Util.PrintLog(configData.ServerStatusMessage.WebhookUri);
+                Util.PrintLog(configData.StatusMessageInfo.WebhookUri);
 
                 Util.PrintLog("Created config.json file");
             }
@@ -119,7 +118,7 @@ namespace IGDiscord.Services
                 File.WriteAllText(configPath, serializedConfigData);
 
                 _config = configData;
-                Util.PrintLog(configData.ServerStatusMessage.WebhookUri);
+                Util.PrintLog(configData.StatusMessageInfo.WebhookUri);
 
                 Util.PrintLog("Updated config.json file");
             }

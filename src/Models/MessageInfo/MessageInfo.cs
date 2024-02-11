@@ -2,16 +2,11 @@
 {
     public class MessageInfo
     {
-        public required string MessageType { get; set; }
-
-        /// <summary>
-        /// Prefix of message posted to Discord
-        /// </summary>
-        public string Prefix { get; set; } = "IG";
+        public string MessageType { get; set; } = "";
 
         /// <summary>
         /// Webhook Uri
         /// </summary>
-        public required string WebhookUri { get; set; }
+        public string WebhookUri { get; set; } = "";
     }
 }
