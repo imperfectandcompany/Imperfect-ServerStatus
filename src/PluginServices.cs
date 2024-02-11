@@ -1,11 +1,11 @@
 ﻿namespace IGDiscord
 {
-    using IGDiscord.Services;
-    using IGDiscord.Services.Interfaces;
+    using global::IGDiscord.Services;
+    using global::IGDiscord.Services.Interfaces;
     using CounterStrikeSharp.API.Core;
     using Microsoft.Extensions.DependencyInjection;
 
-    public class PluginServices : IPluginServiceCollection<IGDiscordPlugin>
+    public class PluginServices : IPluginServiceCollection<IGDiscord>
     {
         public void ConfigureServices(IServiceCollection serviceCollection)
         {

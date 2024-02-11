@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace IGDiscord;
 
-public class IGDiscordPlugin : BasePlugin
+public class IGDiscord : BasePlugin
 {
     public override string ModuleName => "IGDiscordPlugin";
     public override string ModuleVersion => "1.0.0";
