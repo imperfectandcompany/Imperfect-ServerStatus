@@ -66,16 +66,19 @@ namespace IGDiscord.Services
             }
         }
 
-        public async Task PostJsonToWebhook(string serializedMessage, string webhookUri)
+        public async Task PostJsonToWebhook(string serializedMessage, ServerStatusMessageInfo messageInfo)
         {
             try
             {
                 var content = new StringContent(serializedMessage, Encoding.UTF8, "application/json");
                 _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                HttpResponseMessage response = (await _httpClient.PostAsync($"{webhookUri}?wait=true", content)).EnsureSuccessStatusCode();
+                HttpResponseMessage response = (await _httpClient.PostAsync($"{messageInfo.WebhookUri}?wait=true", content)).EnsureSuccessStatusCode();
 
-                var messageId = GetDiscordMessageId(response);
+                messageInfo.MessageId = await GetDiscordMessageId(response);
+
+                _config.ServerStatusMessage = messageInfo;
+                _configService.UpdateConfig(_config);
             }
             catch (Exception ex)
             {
