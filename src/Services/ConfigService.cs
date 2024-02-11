@@ -54,7 +54,7 @@ namespace IGDiscord.Services
             {
                 var configData = new Config()
                 {
-                    ServerStatusMessage = new ServerStatusMessageInfo()
+                    ServerStatusMessage = new StatusMessageInfo()
                     {
                         MessageType = Constants.MessageType.ServerStatus,
                         Prefix = "### SAMPLE SERVER STATUS MESSAGE PREFIX ###",

@@ -67,7 +67,7 @@ namespace IGDiscord.Services
             }
         }
 
-        public async Task PostJsonToWebhook(string serializedMessage, ServerStatusMessageInfo messageInfo)
+        public async Task PostJsonToWebhook(string serializedMessage, StatusMessageInfo messageInfo)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace IGDiscord.Services
             }
         }
 
-        public WebhookMessage CreateMessage(ServerStatusMessageInfo messageInfo)
+        public WebhookMessage CreateMessage(StatusMessageInfo messageInfo)
         {
             return new WebhookMessage
             {

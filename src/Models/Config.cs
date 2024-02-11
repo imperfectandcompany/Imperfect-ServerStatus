@@ -13,6 +13,6 @@ namespace IGDiscord.Models
         /// <summary>
         /// Server status message information
         /// </summary>
-        public required ServerStatusMessageInfo ServerStatusMessage { get; set; }
+        public required StatusMessageInfo ServerStatusMessage { get; set; }
     }
 }

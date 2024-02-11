@@ -1,6 +1,6 @@
 ﻿namespace IGDiscord.Models.MessageInfo
 {
-    public class ServerStatusMessageInfo : MessageInfo
+    public class StatusMessageInfo : MessageInfo
     {
         /// <summary>
         /// Message ID of server status message if already posted
