@@ -20,13 +20,16 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
     public Config? _config;
     private readonly IConfigService _configService;
     private readonly IDiscordService _discordService;
+    private readonly ILogger<IGDiscord> _logger;
 
     public IGDiscord(
         IConfigService configService,
-        IDiscordService discordService)
+        IDiscordService discordService,
+        ILogger<IGDiscord> logger)
     {
         _configService = configService;
         _discordService = discordService;
+        _logger = logger;
     }
 
     public override void Unload(bool hotReload)
@@ -47,7 +50,7 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
         }
         else
         {
-            Util.PrintError("The config file did not load correctly. Please check that there is a config.json file in the plugin directory.");
+            _logger.LogInformation("The config file did not load correctly. Please check that there is a config.json file in the plugin directory.");
         };
     }
 
