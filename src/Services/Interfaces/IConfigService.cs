@@ -9,8 +9,10 @@ namespace IGDiscord.Services.Interfaces
 {
     public interface IConfigService
     {
+        string GetConfigPath(string moduleDirectory, string moduleName);
+
         Config? LoadConfig(string moduleDirectory);
 
-        void UpdateConfig(Config configData);
+        void UpdateConfig(Config configData, string configPath);
     }
 }

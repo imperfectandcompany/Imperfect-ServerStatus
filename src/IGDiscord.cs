@@ -44,7 +44,7 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
         {
             Task.Run(async () =>
             {
-                await _discordService.SendStatusMessage(Config);
+                await _discordService.SendStatusMessage(Config, ConfigPath);
             });
         }
         else

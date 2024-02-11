@@ -115,10 +115,8 @@ namespace IGDiscord.Services
             return _config;
         }
 
-        public void UpdateConfig(Config configData)
+        public void UpdateConfig(Config configData, string configPath)
         {
-            var configPath = Path.Join(_moduleDirectory, "Config.json");
-
             try
             {
                 var jsonOptions = new JsonSerializerOptions
@@ -131,13 +129,12 @@ namespace IGDiscord.Services
                 File.WriteAllText(configPath, serializedConfigData);
 
                 _config = configData;
-                Util.PrintLog(configData.StatusMessageInfo.WebhookUri);
 
                 Util.PrintLog("Updated config.json file");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                Util.PrintError($"Error updaating the config: {ex}");
             }
         }
     }

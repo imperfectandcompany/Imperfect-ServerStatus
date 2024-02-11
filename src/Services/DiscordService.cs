@@ -1,4 +1,5 @@
-﻿using IGDiscord.Helpers;
+﻿using CounterStrikeSharp.API.Core;
+using IGDiscord.Helpers;
 using IGDiscord.Models;
 using IGDiscord.Models.Discord;
 using IGDiscord.Models.MessageInfo;
@@ -22,16 +23,9 @@ namespace IGDiscord.Services
             _configService = configService;
         }
 
-        public async Task SendStatusMessage(Config config)
+        public async Task SendStatusMessage(Config config, string configPath)
         {
-            if (config == null)
-            {
-                Util.PrintError($"Something went wrong with parsing the config.");
-            }
-            else
-            {
-                _config = config;
-            }
+            _config = config;
 
             var messageInfo = _config.StatusMessageInfo;
 
@@ -50,7 +44,20 @@ namespace IGDiscord.Services
                     var serializedMessage = JsonSerializer.Serialize(discordWebhookMessage, serializeOptions);
 
                     /// No message exists, send first message
-                    await PostJsonToWebhook(serializedMessage, messageInfo);
+                    var response = await PostJsonToWebhook(serializedMessage, messageInfo);
+
+                    if (response != null)
+                    {
+                        messageInfo.MessageId = await GetDiscordMessageId(response);
+
+                        _config.StatusMessageInfo = messageInfo;
+
+                        _configService.UpdateConfig(_config, configPath);
+                    }
+                    else
+                    {
+                        Util.PrintError("Something went wrong getting the response after posting the Discord message.");
+                    }
                 }
 
                 /// Add message ID to Webhook URI
@@ -68,24 +75,21 @@ namespace IGDiscord.Services
             }
         }
 
-        public async Task PostJsonToWebhook(string serializedMessage, StatusMessageInfo messageInfo)
+        public async Task<HttpResponseMessage> PostJsonToWebhook(string serializedMessage, StatusMessageInfo messageInfo)
         {
             try
             {
                 var content = new StringContent(serializedMessage, Encoding.UTF8, "application/json");
                 _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                HttpResponseMessage response = (await _httpClient.PostAsync($"{messageInfo.WebhookUri}?wait=true", content)).EnsureSuccessStatusCode();
-
-                messageInfo.MessageId = await GetDiscordMessageId(response);
-
-                _config.StatusMessageInfo = messageInfo;
-                _configService.UpdateConfig(_config);
+                return (await _httpClient.PostAsync($"{messageInfo.WebhookUri}?wait=true", content)).EnsureSuccessStatusCode();
             }
             catch (Exception ex)
             {
                 Util.PrintError($"Failed to send: {ex.Message}");
             }
+
+            return null;
         }
 
         private async Task<string> GetDiscordMessageId(HttpResponseMessage response)
