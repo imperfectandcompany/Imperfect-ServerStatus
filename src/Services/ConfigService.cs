@@ -14,6 +14,13 @@ namespace IGDiscord.Services
     {
         private Config? _config { get; set; }
 
+        private string _moduleDirectory { get; set; }
+
+        public ConfigService(string moduleDirectory)
+        {
+            _moduleDirectory = moduleDirectory;
+        }
+
         public Config? LoadConfig(string moduleDirectory)
         {
             var configPath = Path.Join(moduleDirectory, "Config.json");
