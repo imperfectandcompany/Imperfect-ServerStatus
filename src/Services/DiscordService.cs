@@ -41,6 +41,7 @@ namespace IGDiscord.Services
 
                 var serializeOptions = new JsonSerializerOptions
                 {
+                    PropertyNameCaseInsensitive = true,
                     PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance
                 };
 
@@ -124,17 +125,14 @@ namespace IGDiscord.Services
 
         public WebhookMessage CreateMessage(StatusMessageInfo messageInfo)
         {
+            messageInfo.MessageEmbed.Timestamp = DateTime.Now;
+
             return new WebhookMessage
             {
                 Content = "",
                 Embeds = new List<Embed>
                 {
-                    new Embed
-                    {
-                        Title = "Server Status Title",
-                        Description = "This is where the description of the server status will go.",
-                        Timestamp = DateTime.Now
-                    }
+                    messageInfo.MessageEmbed
                 }
             };
         }
