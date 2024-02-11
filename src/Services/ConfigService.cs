@@ -15,11 +15,24 @@ namespace IGDiscord.Services
     {
         private Config? _config { get; set; }
 
-        private string _moduleDirectory { get; set; }
-
-        public ConfigService(string moduleDirectory)
+        public string GetConfigPath(string moduleDirectory, string moduleName)
         {
-            _moduleDirectory = moduleDirectory;
+            string? parentDirectory = Directory.GetParent(path: Directory.GetParent(moduleDirectory).FullName)?.FullName;
+
+            if (parentDirectory != null)
+            {
+                var configDir = Path.Combine(parentDirectory, $"configs/plugins/{moduleName}");
+
+                var configPath = Path.Combine(configDir, $"{moduleName}.json");
+
+                return configPath;
+
+            }
+            else
+            {
+                Util.PrintError("Error getting config path");
+                return string.Empty;
+            }
         }
 
         public Config? LoadConfig(string moduleDirectory)

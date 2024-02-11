@@ -1,10 +1,10 @@
 ﻿using IGDiscord.Models.MessageInfo;
 using IGDiscord.Models;
 using IGDiscord.Utils;
-using CounterStrikeSharp.API.Core;
 using IGDiscord.Services.Interfaces;
+using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.Logging;
-using CounterStrikeSharp.API.Modules.Config;
+using CounterStrikeSharp.API;
 
 namespace IGDiscord;
 
@@ -18,6 +18,7 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
     public Config Config { get; set; }
 
     public Config? _config;
+    public string ConfigPath;
     private readonly IConfigService _configService;
     private readonly IDiscordService _discordService;
     private readonly ILogger<IGDiscord> _logger;
@@ -63,6 +64,8 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
                 MessageInterval = 300
             };
         }
+
+        ConfigPath = _configService.GetConfigPath(ModuleDirectory, ModuleName);
 
         Config = config;
     }
