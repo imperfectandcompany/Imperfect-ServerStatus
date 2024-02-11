@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IGDiscord.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace IGDiscord.Services.Interfaces
 {
-    internal interface IDiscordService
+    public interface IDiscordService
     {
+        Task SendServerStatusMessage(Config config);
     }
 }
