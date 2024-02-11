@@ -9,10 +9,10 @@ namespace IGDiscord;
 
 public class IGDiscordPlugin : BasePlugin
 {
-    public override string ModuleName => "Imperfect Gamers Discord Plugin";
+    public override string ModuleName => "IGDiscordPlugin";
     public override string ModuleVersion => "1.0.0";
     public override string ModuleAuthor => "raz";
-    public override string ModuleDescription => "Plugin for Discord Webhooks for Imperfect Gamers";
+    public override string ModuleDescription => "A Discord webhook plugin for Imperfect Gamers";
 
     public Config? _config;
     private DiscordService _discordService;
