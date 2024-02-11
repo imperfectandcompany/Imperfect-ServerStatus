@@ -11,8 +11,6 @@ namespace IGDiscord.Services.Interfaces
     {
         string GetConfigPath(string moduleDirectory, string moduleName);
 
-        Config? LoadConfig(string moduleDirectory);
-
         void UpdateConfig(Config configData, string configPath);
     }
 }
