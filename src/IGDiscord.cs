@@ -39,13 +39,11 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
 
     public override void Load(bool hotReload)
     {
-        _config = _configService.LoadConfig(ModuleDirectory);
-
-        if (_config != null)
+        if (Config != null)
         {
             Task.Run(async () =>
             {
-                await _discordService.SendStatusMessage(_config);
+                await _discordService.SendStatusMessage(Config);
             });
         }
         else
