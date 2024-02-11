@@ -2,6 +2,7 @@
 using IGDiscord.Models;
 using IGDiscord.Models.Discord;
 using IGDiscord.Models.MessageInfo;
+using IGDiscord.Services.Interfaces;
 using IGDiscord.Utils;
 using System.Net.Http.Headers;
 using System.Text;
@@ -9,7 +10,7 @@ using System.Text.Json;
 
 namespace IGDiscord.Services
 {
-    public class DiscordService
+    public class DiscordService : IDiscordService
     {
         private readonly HttpClient _httpClient;
         private readonly ConfigService _configService;

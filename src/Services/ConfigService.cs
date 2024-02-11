@@ -7,10 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using IGDiscord.Services.Interfaces;
 
 namespace IGDiscord.Services
 {
-    public class ConfigService
+    public class ConfigService : IConfigService
     {
         private Config? _config { get; set; }
 
