@@ -4,6 +4,7 @@ using IGDiscord.Models;
 using IGDiscord.Services;
 using IGDiscord.Utils;
 using System.Text.Json;
+using IGDiscord.Services.Interfaces;
 
 namespace IGDiscord;
 
@@ -15,8 +16,16 @@ public class IGDiscord : BasePlugin
     public override string ModuleDescription => "A Discord webhook plugin for Imperfect Gamers";
 
     public Config? _config;
-    private DiscordService _discordService;
-    private ConfigService _configService;
+    private readonly IConfigService _configService;
+    private readonly IDiscordService _discordService;
+
+    public IGDiscord(
+        IConfigService configService,
+        IDiscordService discordService)
+    {
+        _configService = configService;
+        _discordService = discordService;
+    }
 
     public override void Unload(bool hotReload)
     {
@@ -25,9 +34,6 @@ public class IGDiscord : BasePlugin
 
     public override void Load(bool hotReload)
     {
-        _configService = new ConfigService(ModuleDirectory);
-        _discordService = new DiscordService(_configService);
-
         _config = _configService.LoadConfig(ModuleDirectory);
 
         if (_config != null)
