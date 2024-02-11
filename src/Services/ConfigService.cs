@@ -101,5 +101,31 @@ namespace IGDiscord.Services
 
             return _config;
         }
+
+        public void UpdateConfig(Config configData)
+        {
+            var configPath = Path.Join(_moduleDirectory, "Config.json");
+
+            try
+            {
+                var jsonOptions = new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                };
+
+                var serializedConfigData = JsonSerializer.Serialize(configData, jsonOptions);
+                File.WriteAllText(configPath, serializedConfigData);
+
+                _config = configData;
+                Util.PrintLog(configData.ServerStatusMessage.WebhookUri);
+
+                Util.PrintLog("Updated config.json file");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
