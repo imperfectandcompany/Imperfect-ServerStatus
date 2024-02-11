@@ -40,7 +40,7 @@ public class IGDiscord : BasePlugin
         {
             Task.Run(async () =>
             {
-                await _discordService.SendServerStatusMessage(_config);
+                await _discordService.SendStatusMessage(_config);
             });
         }
         else

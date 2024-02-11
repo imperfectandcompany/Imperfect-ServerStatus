@@ -22,7 +22,7 @@ namespace IGDiscord.Services
             _configService = configService;
         }
 
-        public async Task SendServerStatusMessage(Config config)
+        public async Task SendStatusMessage(Config config)
         {
             if (config == null)
             {

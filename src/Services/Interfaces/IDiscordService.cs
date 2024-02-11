@@ -9,6 +9,6 @@ namespace IGDiscord.Services.Interfaces
 {
     public interface IDiscordService
     {
-        Task SendServerStatusMessage(Config config);
+        Task SendStatusMessage(Config config);
     }
 }
