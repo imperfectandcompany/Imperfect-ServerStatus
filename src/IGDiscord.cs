@@ -20,7 +20,7 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
 
     public Config? _config;
     public string ConfigPath;
-    public StatusData StatusData = new();
+    public StatusData _statusData = new();
     private readonly IConfigService _configService;
     private readonly IDiscordService _discordService;
     private readonly ILogger<IGDiscord> _logger;
@@ -68,26 +68,22 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
                     }
                 });
             }
-            else
+
+            // Update the message
+            Task.Run(async () =>
             {
-                // Message exists, update the message
-                Task.Run(async () =>
+                var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(Config.StatusMessageInfo.MessageInterval));
+                while (await periodicTimer.WaitForNextTickAsync())
                 {
-                    var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(Config.StatusMessageInfo.MessageInterval));
-                    while (await periodicTimer.WaitForNextTickAsync())
-                    {
-                        Util.PrintLog("Updating status message");
-                        Util.PrintLog($"MessageId: {Config.StatusMessageInfo.MessageId}");
-                        Util.PrintLog($"WebhookUri: {Config.StatusMessageInfo.WebhookUri}");
+                    Util.PrintLog("Updating status message");
 
-                        UpdateStatusData();
+                    UpdateStatusData();
 
-                        WebhookMessage updatedWebhookMessage = _discordService.UpdateWebhookMessage(initialWebhookMessage, StatusData);
+                    WebhookMessage updatedWebhookMessage = _discordService.UpdateWebhookMessage(initialWebhookMessage, _statusData);
 
-                        await _discordService.UpdateStatusMessage(Config.StatusMessageInfo, updatedWebhookMessage);
-                    }
-                });
-            }
+                    await _discordService.UpdateStatusMessage(Config.StatusMessageInfo, updatedWebhookMessage);
+                }
+            });
         }
         else
         {
