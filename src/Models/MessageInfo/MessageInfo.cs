@@ -2,8 +2,6 @@
 {
     public class MessageInfo
     {
-        public string MessageType { get; set; } = "";
-
         /// <summary>
         /// Webhook Uri
         /// </summary>
