@@ -26,6 +26,6 @@
 
         public EmbedAuthor? Author { get; set; }
 
-        public EmbedField[]? Fields { get; set; }
+        public List<EmbedField> Fields { get; set; }
     }
 }
