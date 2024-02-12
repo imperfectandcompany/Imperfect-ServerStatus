@@ -23,56 +23,46 @@ namespace IGDiscord.Services
             _configService = configService;
         }
 
-        public async Task SendStatusMessage(Config config, string configPath)
+        public async Task<string> SendInitialStatusMessage(StatusMessageInfo messageInfo, WebhookMessage webhookMessage)
         {
-            _config = config;
-
-            var messageInfo = _config.StatusMessageInfo;
-
-            if (messageInfo != null)
+            var serializeOptions = new JsonSerializerOptions
             {
-                WebhookMessage discordWebhookMessage = CreateMessage(messageInfo);
+                PropertyNameCaseInsensitive = true,
+                PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance
+            };
 
-                var serializeOptions = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance
-                };
+            var serializedMessage = JsonSerializer.Serialize(webhookMessage, serializeOptions);
 
-                if (string.IsNullOrEmpty(messageInfo.MessageId))
-                {
-                    var serializedMessage = JsonSerializer.Serialize(discordWebhookMessage, serializeOptions);
+            Util.PrintLog("Sending initial status message");
 
-                    /// No message exists, send first message
-                    var response = await PostJsonToWebhook(serializedMessage, messageInfo);
+            /// No message exists, send first message
+            var response = await PostJsonToWebhook(serializedMessage, messageInfo);
 
-                    if (response != null)
-                    {
-                        messageInfo.MessageId = await GetDiscordMessageId(response);
-
-                        _config.StatusMessageInfo = messageInfo;
-
-                        _configService.UpdateConfig(_config, configPath);
-                    }
-                    else
-                    {
-                        Util.PrintError("Something went wrong getting the response after posting the Discord message.");
-                    }
-                }
-
-                /// Add message ID to Webhook URI
-                messageInfo.WebhookUri = messageInfo.WebhookUri + "/messages/" + messageInfo.MessageId;
-
-                var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(messageInfo.MessageInterval));
-                while (await periodicTimer.WaitForNextTickAsync())
-                {
-                    discordWebhookMessage = UpdateMessage(discordWebhookMessage);
-
-                    var serializedMessage = JsonSerializer.Serialize(discordWebhookMessage, serializeOptions);
-
-                    await PatchJsonToWebhook(serializedMessage, messageInfo.WebhookUri);
-                }
+            if (response != null)
+            {
+                return await GetDiscordMessageId(response);
             }
+            else
+            {
+                Util.PrintError("Something went wrong getting the response after posting the Discord message.");
+                return string.Empty;
+            }
+        }
+
+        public async Task UpdateStatusMessage(StatusMessageInfo messageInfo, WebhookMessage webhookMessage)
+        {
+            var serializeOptions = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance
+            };
+
+            /// Add message ID to Webhook URI
+            var messageEditUri = messageInfo.WebhookUri + "/messages/" + messageInfo.MessageId;
+
+            var serializedMessage = JsonSerializer.Serialize(webhookMessage, serializeOptions);
+
+            await PatchJsonToWebhook(serializedMessage, messageEditUri);
         }
 
         public async Task<HttpResponseMessage> PostJsonToWebhook(string serializedMessage, StatusMessageInfo messageInfo)
@@ -127,9 +117,9 @@ namespace IGDiscord.Services
             }
         }
 
-        public WebhookMessage CreateMessage(StatusMessageInfo messageInfo)
+        public WebhookMessage CreateWebhookMessage(StatusMessageInfo messageInfo, StatusData statusData)
         {
-            messageInfo.MessageEmbed.Timestamp = DateTime.Now;
+            messageInfo.MessageEmbed.Timestamp = statusData.Timestamp;
 
             return new WebhookMessage
             {
@@ -141,7 +131,7 @@ namespace IGDiscord.Services
             };
         }
 
-        public WebhookMessage UpdateMessage(WebhookMessage webhookMessage)
+        public WebhookMessage UpdateWebhookMessage(WebhookMessage webhookMessage, StatusData statusData)
         {
             if (webhookMessage.Embeds != null)
             {
@@ -149,8 +139,8 @@ namespace IGDiscord.Services
 
                 if (embed != null)
                 {
-                    embed.Description = "Updated description on " + DateTime.Now;
-                    embed.Timestamp = DateTime.Now;
+                    embed.Description = "Updated description on " + statusData.Timestamp;
+                    embed.Timestamp = statusData.Timestamp;
                 }
             }
 

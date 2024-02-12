@@ -5,6 +5,7 @@ using IGDiscord.Services.Interfaces;
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.Logging;
 using CounterStrikeSharp.API;
+using IGDiscord.Models.Discord;
 
 namespace IGDiscord;
 
@@ -19,6 +20,7 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
 
     public Config? _config;
     public string ConfigPath;
+    public StatusData StatusData = new();
     private readonly IConfigService _configService;
     private readonly IDiscordService _discordService;
     private readonly ILogger<IGDiscord> _logger;
@@ -42,15 +44,64 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
     {
         if (Config != null)
         {
-            Task.Run(async () =>
+
+            WebhookMessage initialWebhookMessage = _discordService.CreateWebhookMessage(Config.StatusMessageInfo, StatusData);
+
+            if (string.IsNullOrEmpty(Config.StatusMessageInfo.MessageId))
             {
-                await _discordService.SendStatusMessage(Config, ConfigPath);
-            });
+                // Send initial message
+                Task.Run(async () =>
+                {
+                    UpdateStatusData();
+
+                    var messageId = await _discordService.SendInitialStatusMessage(Config.StatusMessageInfo, initialWebhookMessage);
+
+                    if (messageId != null)
+                    {
+                        Config.StatusMessageInfo.MessageId = messageId;
+
+                        _configService.UpdateConfig(Config, ConfigPath);
+                    }
+                    else
+                    {
+                        Util.PrintError("Something went wrong getting a reponse when sending message.");
+                    }
+                });
+            }
+            else
+            {
+                // Message exists, update the message
+                Task.Run(async () =>
+                {
+                    var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(Config.StatusMessageInfo.MessageInterval));
+                    while (await periodicTimer.WaitForNextTickAsync())
+                    {
+                        Util.PrintLog("Updating status message");
+                        Util.PrintLog($"MessageId: {Config.StatusMessageInfo.MessageId}");
+                        Util.PrintLog($"WebhookUri: {Config.StatusMessageInfo.WebhookUri}");
+
+                        UpdateStatusData();
+
+                        WebhookMessage updatedWebhookMessage = _discordService.UpdateWebhookMessage(initialWebhookMessage, StatusData);
+
+                        await _discordService.UpdateStatusMessage(Config.StatusMessageInfo, updatedWebhookMessage);
+                    }
+                });
+            }
         }
         else
         {
             _logger.LogInformation("The config file did not load correctly. Please check that there is a config.json file in the plugin directory.");
         };
+    }
+
+    private void UpdateStatusData()
+    {
+        Server.NextFrame(() =>
+        {
+            StatusData.MapName = NativeAPI.GetMapName();
+            StatusData.Timestamp = DateTime.Now;
+        });
     }
 
     public void OnConfigParsed(Config config)

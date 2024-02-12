@@ -1,4 +1,6 @@
 ﻿using IGDiscord.Models;
+using IGDiscord.Models.Discord;
+using IGDiscord.Models.MessageInfo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,12 @@ namespace IGDiscord.Services.Interfaces
 {
     public interface IDiscordService
     {
-        Task SendStatusMessage(Config config, string configPath);
+        Task<string> SendInitialStatusMessage(StatusMessageInfo messageInfo, WebhookMessage webhookMessage);
+
+        Task UpdateStatusMessage(StatusMessageInfo messageInfo, WebhookMessage webhookMessage);
+
+        WebhookMessage CreateWebhookMessage(StatusMessageInfo messageInfo, StatusData statusData);
+
+        WebhookMessage UpdateWebhookMessage(WebhookMessage webhookMessage, StatusData statusData);
     }
 }
