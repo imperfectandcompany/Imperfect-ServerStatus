@@ -1,6 +1,6 @@
 ﻿namespace IGDiscord.Models.Discord
 {
-    public class EmbedFields
+    public class EmbedField
     {
         public string Name { get; set; }
 
