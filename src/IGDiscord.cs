@@ -44,16 +44,15 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
     {
         if (Config != null)
         {
+            UpdateStatusData();
 
-            WebhookMessage initialWebhookMessage = _discordService.CreateWebhookMessage(Config.StatusMessageInfo, StatusData);
+            WebhookMessage initialWebhookMessage = _discordService.CreateWebhookMessage(Config.StatusMessageInfo, _statusData);
 
             if (string.IsNullOrEmpty(Config.StatusMessageInfo.MessageId))
             {
                 // Send initial message
                 Task.Run(async () =>
                 {
-                    UpdateStatusData();
-
                     var messageId = await _discordService.SendInitialStatusMessage(Config.StatusMessageInfo, initialWebhookMessage);
 
                     if (messageId != null)
