@@ -11,7 +11,7 @@ namespace IGDiscord.Models.Discord
     {
         public string? Content { get; set; }
 
-        public required List<Embed> Embeds { get; set; }
+        public List<Embed> Embeds { get; set; }
 
     }
 }
