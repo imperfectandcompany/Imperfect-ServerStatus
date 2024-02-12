@@ -6,6 +6,6 @@
 
         public  string? IconUrl { get; set; }
 
-        public  string? Proxy_Icon_Url { get; set; }
+        public  string? ProxyIconUrl { get; set; }
     }
 }
