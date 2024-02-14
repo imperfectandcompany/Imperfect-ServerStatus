@@ -13,13 +13,21 @@ namespace IGDiscord.Services
 {
     public class ConfigService : IConfigService
     {
-        private Config? _config { get; set; }
-
         public string GetConfigPath(string moduleDirectory, string moduleName)
         {
-            string? parentDirectory = Directory.GetParent(path: Directory.GetParent(moduleDirectory).FullName)?.FullName;
+            string parentDirectory = string.Empty;
 
-            if (parentDirectory != null)
+            var moduleDirectoryParent = Directory.GetParent(moduleDirectory);
+            if (moduleDirectoryParent != null)
+            {
+                var parentOfModuleDirectoryParent = Directory.GetParent(path: moduleDirectoryParent.FullName);
+                if (parentOfModuleDirectoryParent != null)
+                {
+                    parentDirectory = parentOfModuleDirectoryParent.FullName;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(parentDirectory))
             {
                 var configDir = Path.Combine(parentDirectory, $"configs/plugins/{moduleName}");
 
@@ -47,8 +55,6 @@ namespace IGDiscord.Services
 
                 var serializedConfigData = JsonSerializer.Serialize(configData, jsonOptions);
                 File.WriteAllText(configPath, serializedConfigData);
-
-                _config = configData;
 
                 Util.PrintLog("Updated config.json file");
             }
