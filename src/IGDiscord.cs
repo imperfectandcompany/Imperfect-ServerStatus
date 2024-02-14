@@ -83,7 +83,7 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
         // Send initial message
         Task.Run(async () =>
         {
-            var messageId = await _discordService.CreateStatusMessage(Config.StatusInfo, _webhookMessage);
+            var messageId = await _discordService.CreateStatusMessageAsync(Config.StatusInfo, _webhookMessage);
 
             if (!string.IsNullOrEmpty(messageId))
             {
@@ -107,8 +107,7 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
 
             WebhookMessage updatedWebhookMessage = _discordService.UpdateWebhookMessage(_webhookMessage, _statusData);
 
-            /// TODO return a bool if successful if false break out of loop
-            await _discordService.UpdateStatusMessage(Config.StatusInfo, updatedWebhookMessage);
+            await _discordService.UpdateStatusMessageAsync(Config.StatusInfo, updatedWebhookMessage);
         });
     }
 
