@@ -5,9 +5,11 @@ using IGDiscord.Models.Discord;
 using IGDiscord.Models.MessageInfo;
 using IGDiscord.Services.Interfaces;
 using IGDiscord.Utils;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Xml.Linq;
 
 namespace IGDiscord.Services
 {
@@ -32,8 +34,6 @@ namespace IGDiscord.Services
             };
 
             var serializedMessage = JsonSerializer.Serialize(webhookMessage, serializeOptions);
-
-            Util.PrintLog("Sending initial status message");
 
             /// No message exists, send first message
             var response = await PostJsonToWebhook(serializedMessage, messageInfo);
@@ -65,14 +65,61 @@ namespace IGDiscord.Services
             await PatchJsonToWebhook(serializedMessage, messageEditUri);
         }
 
-        public async Task<HttpResponseMessage> PostJsonToWebhook(string serializedMessage, StatusMessageInfo messageInfo)
+        public WebhookMessage CreateWebhookMessage(StatusMessageInfo statusMessageInfo, StatusData statusData)
+        {
+            return new WebhookMessage
+            {
+                Content = "",
+                //ActionRowComponents = new List<ActionRowComponent>()
+                //{
+                //    new ActionRowComponent()
+                //    {
+                //        Type = 1,
+                //        Components = new List<ButtonComponent>()
+                //        {
+                //            //CreateButtonComponent(statusMessageInfo)
+                //        }
+                //    }
+                //},
+                Embeds = new List<Embed>
+                {
+                    CreateEmbed(statusMessageInfo, statusData)
+                }
+            };
+        }
+
+        public WebhookMessage UpdateWebhookMessage(WebhookMessage webhookMessage, StatusData statusData)
+        {
+            if (webhookMessage.Embeds != null)
+            {
+                var embed = webhookMessage.Embeds.FirstOrDefault();
+
+                if (embed != null)
+                {
+                    embed.Timestamp = statusData.Timestamp;
+                }
+
+                var mapNameField = embed.Fields.FirstOrDefault(f => f.Name == "Map");
+
+                if (mapNameField != null)
+                {
+                    mapNameField.Value = statusData.MapName ?? "";
+                }
+            }
+
+            return webhookMessage;
+        }
+
+        private async Task<HttpResponseMessage> PostJsonToWebhook(string serializedMessage, StatusMessageInfo messageInfo)
         {
             try
             {
+                var webhookRequestUri = $"{messageInfo.WebhookUri}?wait=true";
+
                 var content = new StringContent(serializedMessage, Encoding.UTF8, "application/json");
                 _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                return (await _httpClient.PostAsync($"{messageInfo.WebhookUri}?wait=true", content)).EnsureSuccessStatusCode();
+                return (await _httpClient.PostAsync(webhookRequestUri, content)).EnsureSuccessStatusCode();
             }
             catch (Exception ex)
             {
@@ -80,6 +127,21 @@ namespace IGDiscord.Services
             }
 
             return null;
+        }
+
+        private async Task PatchJsonToWebhook(string serializedMessage, string webhookUri)
+        {
+            try
+            {
+                var content = new StringContent(serializedMessage, Encoding.UTF8, "application/json");
+                _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json-patch+json"));
+
+                HttpResponseMessage response = (await _httpClient.PatchAsync($"{webhookUri}", content)).EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                Util.PrintError($"Failed to send: {ex.Message}");
+            }
         }
 
         private async Task<string> GetDiscordMessageId(HttpResponseMessage response)
@@ -102,49 +164,57 @@ namespace IGDiscord.Services
             }
         }
 
-        public async Task PatchJsonToWebhook(string serializedMessage, string webhookUri)
+        private Embed CreateEmbed(StatusMessageInfo statusMessageInfo, StatusData statusData)
         {
-            try
+            var embed = new Embed()
             {
-                var content = new StringContent(serializedMessage, Encoding.UTF8, "application/json");
-                _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json-patch+json"));
+                Title = statusMessageInfo.ServerName,
+                Description = "",
+                Type = "rich",
+                Url = "",
+                Timestamp = DateTime.Now,
+                Fields = new List<EmbedField>(){
+                    new EmbedField(){
+                        Name = "Status",
+                        Value = "Online \uD83D\uDFE2",
+                        Inline = true
+                    },
+                    new EmbedField()
+                    {
+                        Name = "Map",
+                        Value = statusData.MapName ?? "",
+                        Inline = true
+                    },  
+                    new EmbedField()
+                    {
+                        Name = "IP Address",
+                        Value = statusMessageInfo.IpAddress ?? "",
+                        Inline = true
+                    }
+                }
 
-                HttpResponseMessage response = (await _httpClient.PatchAsync($"{webhookUri}", content)).EnsureSuccessStatusCode();
-            }
-            catch (Exception ex)
-            {
-                Util.PrintError($"Failed to send: {ex.Message}");
-            }
+            };
+
+            return embed;
         }
 
-        public WebhookMessage CreateWebhookMessage(StatusMessageInfo messageInfo, StatusData statusData)
+        private ButtonComponent CreateButtonComponent(StatusMessageInfo statusMessageInfo)
         {
-            messageInfo.MessageEmbed.Timestamp = statusData.Timestamp;
-
-            return new WebhookMessage
+            var buttonComponent = new ButtonComponent()
             {
-                Content = "",
-                Embeds = new List<Embed>
+                Type = 2,
+                Style = 5,
+                Label = "Connect to server",
+                Url = $"steam://connect/{statusMessageInfo.IpAddress}",
+                Disabled = false,
+                Emoji = new Emoji()
                 {
-                    messageInfo.MessageEmbed
+                    Id = null,
+                    Name = "🔗"
                 }
             };
-        }
 
-        public WebhookMessage UpdateWebhookMessage(WebhookMessage webhookMessage, StatusData statusData)
-        {
-            if (webhookMessage.Embeds != null)
-            {
-                var embed = webhookMessage.Embeds.FirstOrDefault();
-
-                if (embed != null)
-                {
-                    embed.Description = "Updated description on " + statusData.Timestamp;
-                    embed.Timestamp = statusData.Timestamp;
-                }
-            }
-
-            return webhookMessage;
+            return buttonComponent;
         }
     }
 }

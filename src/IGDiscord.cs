@@ -6,6 +6,8 @@ using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.Logging;
 using CounterStrikeSharp.API;
 using IGDiscord.Models.Discord;
+using CounterStrikeSharp.API.Core.Attributes.Registration;
+using System.Threading;
 
 namespace IGDiscord;
 
@@ -21,6 +23,8 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
     public Config? _config;
     public string ConfigPath;
     public StatusData _statusData = new();
+    private bool _serverOnlineStatus;
+    private WebhookMessage _webhookMessage;
     private readonly IConfigService _configService;
     private readonly IDiscordService _discordService;
     private readonly ILogger<IGDiscord> _logger;
@@ -37,6 +41,7 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
 
     public override void Unload(bool hotReload)
     {
+        _serverOnlineStatus = false;
         base.Unload(hotReload);
     }
 
@@ -44,20 +49,23 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
     {
         if (Config != null)
         {
+            _serverOnlineStatus = true;
+            _statusData.Timestamp = DateTime.Now;
+
             UpdateStatusData();
 
-            WebhookMessage initialWebhookMessage = _discordService.CreateWebhookMessage(Config.StatusMessageInfo, _statusData);
+            _webhookMessage = _discordService.CreateWebhookMessage(Config.StatusInfo, _statusData);
 
-            if (string.IsNullOrEmpty(Config.StatusMessageInfo.MessageId))
+            if (string.IsNullOrEmpty(Config.StatusInfo.MessageId))
             {
                 // Send initial message
                 Task.Run(async () =>
                 {
-                    var messageId = await _discordService.SendInitialStatusMessage(Config.StatusMessageInfo, initialWebhookMessage);
+                    var messageId = await _discordService.SendInitialStatusMessage(Config.StatusInfo, _webhookMessage);
 
-                    if (messageId != null)
+                    if (!string.IsNullOrEmpty(messageId))
                     {
-                        Config.StatusMessageInfo.MessageId = messageId;
+                        Config.StatusInfo.MessageId = messageId;
 
                         _configService.UpdateConfig(Config, ConfigPath);
                     }
@@ -71,16 +79,15 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
             // Update the message
             Task.Run(async () =>
             {
-                var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(Config.StatusMessageInfo.MessageInterval));
+                var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(Config.StatusInfo.MessageInterval));
                 while (await periodicTimer.WaitForNextTickAsync())
                 {
-                    Util.PrintLog("Updating status message");
-
                     UpdateStatusData();
 
-                    WebhookMessage updatedWebhookMessage = _discordService.UpdateWebhookMessage(initialWebhookMessage, _statusData);
+                    WebhookMessage updatedWebhookMessage = _discordService.UpdateWebhookMessage(_webhookMessage, _statusData);
 
-                    await _discordService.UpdateStatusMessage(Config.StatusMessageInfo, updatedWebhookMessage);
+                    /// TODO return a bool if successful if false break out of loop
+                    await _discordService.UpdateStatusMessage(Config.StatusInfo, updatedWebhookMessage);
                 }
             });
         }

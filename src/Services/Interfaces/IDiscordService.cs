@@ -15,7 +15,7 @@ namespace IGDiscord.Services.Interfaces
 
         Task UpdateStatusMessage(StatusMessageInfo messageInfo, WebhookMessage webhookMessage);
 
-        WebhookMessage CreateWebhookMessage(StatusMessageInfo messageInfo, StatusData statusData);
+        WebhookMessage CreateWebhookMessage(StatusMessageInfo statusMessageInfo, StatusData statusData);
 
         WebhookMessage UpdateWebhookMessage(WebhookMessage webhookMessage, StatusData statusData);
     }
