@@ -40,22 +40,42 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
         _logger = logger;
     }
 
-    public override void Unload(bool hotReload)
+    public void OnMapStart(string mapName)
     {
-        _serverOnlineStatus = false;
-        base.Unload(hotReload);
+        _statusData.ServerOnline = true;
+        _statusData.MapName = mapName;
+
+        if (string.IsNullOrEmpty(Config.StatusInfo.MessageId))
+        {
+            CreateDiscordStatusMessage();
+        }
+
+        UpdateDiscordStatusMessage();
     }
 
     public override void Load(bool hotReload)
     {
         if (Config != null)
         {
-            CreateOrUpdateDiscordStatusMessage();
+            _statusData.Timestamp = DateTime.Now;
+
+            _webhookMessage = _discordService.CreateWebhookMessage(Config.StatusInfo, _statusData);
+
+            RegisterListener<Listeners.OnMapStart>(OnMapStart);
         }
         else
         {
             _logger.LogInformation("The config file did not load correctly. Please check that there is a config.json file in the plugin directory.");
         };
+    }
+    
+    public override void Unload(bool hotReload)
+    {
+        _serverOnlineStatus = false;
+
+        UpdateDiscordStatusMessage();
+
+        base.Unload(hotReload);
     }
 
     private void CreateDiscordStatusMessage()
