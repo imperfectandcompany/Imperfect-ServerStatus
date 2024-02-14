@@ -58,57 +58,37 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
         };
     }
 
-    private void CreateOrUpdateDiscordStatusMessage()
+    private void CreateDiscordStatusMessage()
     {
-        _serverOnlineStatus = true;
-        _statusData.Timestamp = DateTime.Now;
-
-        UpdateStatusData();
-
-        _webhookMessage = _discordService.CreateWebhookMessage(Config.StatusInfo, _statusData);
-
-        if (string.IsNullOrEmpty(Config.StatusInfo.MessageId))
-        {
-            // Send initial message
-            Task.Run(async () =>
-            {
-                var messageId = await _discordService.CreateStatusMessage(Config.StatusInfo, _webhookMessage);
-
-                if (!string.IsNullOrEmpty(messageId))
-                {
-                    Config.StatusInfo.MessageId = messageId;
-
-                    _configService.UpdateConfig(Config, ConfigPath);
-                }
-                else
-                {
-                    Util.PrintError("Something went wrong getting a reponse when sending message.");
-                }
-            });
-        }
-
-        // Update the message
+        // Send initial message
         Task.Run(async () =>
         {
-            var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(Config.StatusInfo.MessageInterval));
-            while (await periodicTimer.WaitForNextTickAsync())
+            var messageId = await _discordService.CreateStatusMessage(Config.StatusInfo, _webhookMessage);
+
+            if (!string.IsNullOrEmpty(messageId))
             {
-                UpdateStatusData();
+                Config.StatusInfo.MessageId = messageId;
 
-                WebhookMessage updatedWebhookMessage = _discordService.UpdateWebhookMessage(_webhookMessage, _statusData);
-
-                /// TODO return a bool if successful if false break out of loop
-                await _discordService.UpdateStatusMessage(Config.StatusInfo, updatedWebhookMessage);
+                _configService.UpdateConfig(Config, ConfigPath);
+            }
+            else
+            {
+                Util.PrintError("Something went wrong getting a reponse when sending message.");
             }
         });
     }
 
-    private void UpdateStatusData()
+    private void UpdateDiscordStatusMessage()
     {
-        Server.NextFrame(() =>
+        // Update the message
+        Task.Run(async () =>
         {
-            _statusData.MapName = NativeAPI.GetMapName();
             _statusData.Timestamp = DateTime.Now;
+
+            WebhookMessage updatedWebhookMessage = _discordService.UpdateWebhookMessage(_webhookMessage, _statusData);
+
+            /// TODO return a bool if successful if false break out of loop
+            await _discordService.UpdateStatusMessage(Config.StatusInfo, updatedWebhookMessage);
         });
     }
 
