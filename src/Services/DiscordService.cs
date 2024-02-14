@@ -92,19 +92,9 @@ namespace IGDiscord.Services
         {
             if (webhookMessage.Embeds != null)
             {
-                var embed = webhookMessage.Embeds.FirstOrDefault();
+                var statusEmbed = webhookMessage.Embeds.FirstOrDefault();
 
-                if (embed != null)
-                {
-                    embed.Timestamp = statusData.Timestamp;
-                }
-
-                var mapNameField = embed.Fields.FirstOrDefault(f => f.Name == "Map");
-
-                if (mapNameField != null)
-                {
-                    mapNameField.Value = statusData.MapName ?? "";
-                }
+                statusEmbed = UpdateEmbed(statusEmbed, statusData);
             }
 
             return webhookMessage;
@@ -196,6 +186,23 @@ namespace IGDiscord.Services
             };
 
             return embed;
+        }
+
+        private Embed? UpdateEmbed(Embed? statusEmbed, StatusData statusData)
+        {
+            if (statusEmbed != null)
+            {
+                statusEmbed.Timestamp = statusData.Timestamp;
+
+                var mapNameField = statusEmbed.Fields.FirstOrDefault(f => f.Name == "Map");
+
+                if (mapNameField != null)
+                {
+                    mapNameField.Value = statusData.MapName ?? "";
+                }
+            }
+
+            return statusEmbed;
         }
 
         private ButtonComponent CreateButtonComponent(StatusMessageInfo statusMessageInfo)
