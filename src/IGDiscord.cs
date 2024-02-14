@@ -101,17 +101,25 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
 
     public void OnConfigParsed(Config config)
     {
-        if (config.StatusMessageInfo == null)
+        ConfigPath = _configService.GetConfigPath(ModuleDirectory, ModuleName);
+
+        var configExists = File.Exists(ConfigPath);
+
+        if (configExists is false)
         {
-            config.StatusMessageInfo = new StatusMessageInfo()
+            Util.PrintLog($"Creating {ModuleName}.json for the first time. ");
+
+            config = new Config()
             {
-                MessageType = Constants.MessageType.ServerStatus,
-                WebhookUri = "https://discord.com/api/webhooks/###############/#################",
-                MessageInterval = 300
+                StatusInfo = new StatusMessageInfo()
+                {
+                    ServerName = "",
+                    IpAddress = "",
+                    WebhookUri = "",
+                    MessageInterval = 300
+                }
             };
         }
-
-        ConfigPath = _configService.GetConfigPath(ModuleDirectory, ModuleName);
 
         Config = config;
     }
