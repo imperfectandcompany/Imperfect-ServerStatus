@@ -197,6 +197,16 @@ namespace IGDiscord.Services
                 {
                     mapNameField.Value = statusData.MapName ?? "";
                 }
+
+                var serverOnlineStatusField = statusEmbed.Fields.FirstOrDefault(f => f.Name == "Status");
+
+                if (serverOnlineStatusField != null)
+                {
+                    if (statusData.ServerOnline is false)
+                    {
+                        serverOnlineStatusField.Value = "Offline \uD83D\uDD34";
+                    }
+                }
             }
 
             return statusEmbed;
