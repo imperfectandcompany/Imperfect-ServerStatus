@@ -23,7 +23,6 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
     public string ConfigPath;
 
     public StatusData _statusData = new();
-    private bool _serverOnlineStatus;
     private WebhookMessage _webhookMessage;
 
     private readonly IConfigService _configService;
@@ -71,10 +70,6 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
     
     public override void Unload(bool hotReload)
     {
-        _serverOnlineStatus = false;
-        
-        UpdateDiscordStatusMessage();
-
         base.Unload(hotReload);
     }
 
