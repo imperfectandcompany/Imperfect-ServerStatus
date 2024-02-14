@@ -115,9 +115,7 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
     {
         ConfigPath = _configService.GetConfigPath(ModuleDirectory, ModuleName);
 
-        var configExists = File.Exists(ConfigPath);
-
-        if (configExists is false)
+        if (File.Exists(ConfigPath) is false)
         {
             Util.PrintLog($"Creating {ModuleName}.json for the first time. ");
 
