@@ -65,14 +65,14 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
         }
         else
         {
-            _logger.LogInformation("The config file did not load correctly. Please check that there is a config.json file in the plugin directory.");
+            _logger.LogInformation("The config file did not load correctly. Please check that there is a {ModuleName}.json file in the CounterStrikeSharp config directory.", ModuleName);
         };
     }
     
     public override void Unload(bool hotReload)
     {
         _serverOnlineStatus = false;
-
+        
         UpdateDiscordStatusMessage();
 
         base.Unload(hotReload);
@@ -93,7 +93,7 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
             }
             else
             {
-                Util.PrintError("Something went wrong getting a reponse when sending message.");
+                Util.PrintError("Something went wrong getting a response when sending message.");
             }
         });
     }
