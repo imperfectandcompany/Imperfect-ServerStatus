@@ -16,13 +16,10 @@ namespace IGDiscord.Services
     public class DiscordService : IDiscordService
     {
         private readonly HttpClient _httpClient;
-        private readonly IConfigService _configService;
-        private Config? _config;
 
-        public DiscordService(IConfigService configService)
+        public DiscordService()
         {
             _httpClient = new HttpClient();
-            _configService = configService;
         }
 
         public async Task<string> SendInitialStatusMessage(StatusMessageInfo messageInfo, WebhookMessage webhookMessage)
