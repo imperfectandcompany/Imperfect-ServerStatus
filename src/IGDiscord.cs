@@ -19,12 +19,12 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
     public override string ModuleDescription => "A Discord webhook plugin for Imperfect Gamers";
 
     public Config Config { get; set; }
-
-    public Config? _config;
     public string ConfigPath;
+
     public StatusData _statusData = new();
     private bool _serverOnlineStatus;
     private WebhookMessage _webhookMessage;
+
     private readonly IConfigService _configService;
     private readonly IDiscordService _discordService;
     private readonly ILogger<IGDiscord> _logger;
