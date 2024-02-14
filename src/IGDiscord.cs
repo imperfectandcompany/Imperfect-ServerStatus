@@ -61,7 +61,7 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
                 // Send initial message
                 Task.Run(async () =>
                 {
-                    var messageId = await _discordService.SendInitialStatusMessage(Config.StatusInfo, _webhookMessage);
+                    var messageId = await _discordService.CreateStatusMessage(Config.StatusInfo, _webhookMessage);
 
                     if (!string.IsNullOrEmpty(messageId))
                     {

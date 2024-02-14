@@ -22,7 +22,7 @@ namespace IGDiscord.Services
             _httpClient = new HttpClient();
         }
 
-        public async Task<string> SendInitialStatusMessage(StatusMessageInfo messageInfo, WebhookMessage webhookMessage)
+        public async Task<string> CreateStatusMessage(StatusMessageInfo messageInfo, WebhookMessage webhookMessage)
         {
             var serializeOptions = new JsonSerializerOptions
             {

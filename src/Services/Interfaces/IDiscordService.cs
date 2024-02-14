@@ -11,7 +11,7 @@ namespace IGDiscord.Services.Interfaces
 {
     public interface IDiscordService
     {
-        Task<string> SendInitialStatusMessage(StatusMessageInfo messageInfo, WebhookMessage webhookMessage);
+        Task<string> CreateStatusMessage(StatusMessageInfo messageInfo, WebhookMessage webhookMessage);
 
         Task UpdateStatusMessage(StatusMessageInfo messageInfo, WebhookMessage webhookMessage);
 
