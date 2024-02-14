@@ -1,4 +1,5 @@
 ﻿using CounterStrikeSharp.API.Core;
+using IGDiscord.Models.Discord;
 using IGDiscord.Models.MessageInfo;
 using System.Text.Json.Serialization;
 
@@ -15,6 +16,6 @@ namespace IGDiscord.Models
         /// <summary>
         /// Server status message information
         /// </summary>
-        public StatusMessageInfo StatusMessageInfo { get; set; } = new();
+        public StatusMessageInfo StatusInfo { get; set; } = new();
     }
 }
