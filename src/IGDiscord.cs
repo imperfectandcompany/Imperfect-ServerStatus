@@ -94,8 +94,8 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
     {
         Server.NextFrame(() =>
         {
-            StatusData.MapName = NativeAPI.GetMapName();
-            StatusData.Timestamp = DateTime.Now;
+            _statusData.MapName = NativeAPI.GetMapName();
+            _statusData.Timestamp = DateTime.Now;
         });
     }
 
