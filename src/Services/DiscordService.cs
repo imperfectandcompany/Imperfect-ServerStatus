@@ -6,6 +6,7 @@ using IGDiscord.Models.MessageInfo;
 using IGDiscord.Services.Interfaces;
 using IGDiscord.Utils;
 using System.Net;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -15,13 +16,6 @@ namespace IGDiscord.Services
 {
     public class DiscordService : IDiscordService
     {
-        private readonly HttpClient _httpClient;
-
-        public DiscordService()
-        {
-            _httpClient = new HttpClient();
-        }
-
         public async Task<string> CreateStatusMessageAsync(StatusMessageInfo messageInfo, WebhookMessage webhookMessage)
         {
             var serializeOptions = new JsonSerializerOptions
@@ -104,9 +98,12 @@ namespace IGDiscord.Services
                 var webhookRequestUri = $"{messageInfo.WebhookUri}?wait=true";
 
                 var content = new StringContent(serializedMessage, Encoding.UTF8, "application/json");
-                _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                return (await _httpClient.PostAsync(webhookRequestUri, content)).EnsureSuccessStatusCode();
+                using HttpClient httpClient = new HttpClient();
+
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                return (await httpClient.PostAsync(webhookRequestUri, content)).EnsureSuccessStatusCode();
             }
             catch (Exception ex)
             {
@@ -121,9 +118,12 @@ namespace IGDiscord.Services
             try
             {
                 var content = new StringContent(serializedMessage, Encoding.UTF8, "application/json");
-                _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json-patch+json"));
 
-                HttpResponseMessage response = (await _httpClient.PatchAsync($"{webhookUri}", content)).EnsureSuccessStatusCode();
+                using HttpClient httpClient = new HttpClient();
+
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json-patch+json"));
+
+                HttpResponseMessage response = (await httpClient.PatchAsync($"{webhookUri}", content)).EnsureSuccessStatusCode();
             }
             catch (Exception ex)
             {
