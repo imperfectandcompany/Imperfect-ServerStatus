@@ -114,16 +114,7 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
         {
             Util.PrintLog($"Creating {ModuleName}.json for the first time. ");
 
-            config = new Config()
-            {
-                StatusInfo = new StatusMessageInfo()
-                {
-                    ServerName = "",
-                    IpAddress = "",
-                    WebhookUri = "",
-                    MessageInterval = 300
-                }
-            };
+            config = new Config();
         }
 
         Config = config;
