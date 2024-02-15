@@ -39,6 +39,14 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
         _logger = logger;
     }
 
+    public void OnHostNameChanged(string hostName)
+    {
+        _statusData.ServerName = hostName;
+        _statusData.MapName = Server.MapName;
+
+        UpdateDiscordStatusMessage();
+    }
+
     public void OnMapStart(string mapName)
     {
         _statusData.ServerOnline = true;
@@ -60,6 +68,7 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
 
             _webhookMessage = _discordService.CreateWebhookMessage(Config.StatusInfo, _statusData);
 
+            RegisterListener<Listeners.OnHostNameChanged>(OnHostNameChanged);
             RegisterListener<Listeners.OnMapStart>(OnMapStart);
         }
         else
