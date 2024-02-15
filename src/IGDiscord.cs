@@ -41,8 +41,14 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
 
     public void OnHostNameChanged(string hostName)
     {
+        _statusData.ServerOnline = true;
         _statusData.ServerName = hostName;
         _statusData.MapName = Server.MapName;
+
+        if (string.IsNullOrEmpty(Config.StatusInfo.MessageId))
+        {
+            CreateDiscordStatusMessage();
+        }
 
         UpdateDiscordStatusMessage();
     }
@@ -51,11 +57,6 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
     {
         _statusData.ServerOnline = true;
         _statusData.MapName = mapName;
-
-        if (string.IsNullOrEmpty(Config.StatusInfo.MessageId))
-        {
-            CreateDiscordStatusMessage();
-        }
 
         UpdateDiscordStatusMessage();
     }
