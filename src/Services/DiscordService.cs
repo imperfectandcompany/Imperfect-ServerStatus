@@ -155,7 +155,7 @@ namespace IGDiscord.Services
         {
             var embed = new Embed()
             {
-                Title = statusMessageInfo.ServerName,
+                Title = statusData.ServerName ?? "Server Name",
                 Description = "",
                 Type = "rich",
                 Url = "",
@@ -189,6 +189,8 @@ namespace IGDiscord.Services
         {
             if (statusEmbed != null)
             {
+                statusEmbed.Title = statusData.ServerName;
+
                 statusEmbed.Timestamp = statusData.Timestamp;
 
                 var mapNameField = statusEmbed.Fields.FirstOrDefault(f => f.Name == "Map");
