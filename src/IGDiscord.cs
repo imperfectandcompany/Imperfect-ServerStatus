@@ -9,6 +9,7 @@ using IGDiscord.Models.Discord;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using System.Threading;
 using static CounterStrikeSharp.API.Core.Listeners;
+using System.Net;
 
 namespace IGDiscord;
 
@@ -45,6 +46,11 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
         _statusData.ServerName = hostName;
         _statusData.MapName = Server.MapName;
 
+        Task.Run(async () =>
+        {
+            await GetIpAddress();
+        });
+
         if (string.IsNullOrEmpty(Config.StatusInfo.MessageId))
         {
             CreateDiscordStatusMessage();
@@ -57,6 +63,11 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
     {
         _statusData.ServerOnline = true;
         _statusData.MapName = mapName;
+
+        Task.Run(async () =>
+        {
+            await GetIpAddress();
+        });
 
         UpdateDiscordStatusMessage();
     }
@@ -128,5 +139,23 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
         }
 
         Config = config;
+    }
+
+    private async Task GetIpAddress()
+    {
+        using var httpClient = new HttpClient();
+
+        var dynDnsResponse = await httpClient.GetStringAsync("http://checkip.dyndns.org");
+
+        var dynDnsResponseTrimmed = dynDnsResponse.Split(':')[1].Split('<')[0].Trim();
+
+        if (!IPAddress.TryParse(dynDnsResponseTrimmed, out var ipAddress))
+        {
+            _statusData.IpAddress = "IP address not found";
+        }
+
+        _statusData.IpAddress = ipAddress.ToString() + ":27015";
+
+        Util.PrintLog(_statusData.IpAddress);
     }
 }

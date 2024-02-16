@@ -190,7 +190,6 @@ namespace IGDiscord.Services
             if (statusEmbed != null)
             {
                 statusEmbed.Title = statusData.ServerName;
-
                 statusEmbed.Timestamp = statusData.Timestamp;
 
                 var mapNameField = statusEmbed.Fields.FirstOrDefault(f => f.Name == "Map");
@@ -198,6 +197,13 @@ namespace IGDiscord.Services
                 if (mapNameField != null)
                 {
                     mapNameField.Value = statusData.MapName ?? "";
+                }
+
+                var ipAddressField = statusEmbed.Fields.FirstOrDefault(f => f.Name == "IP Address");
+
+                if (ipAddressField != null)
+                {
+                    ipAddressField.Value = statusData.IpAddress ?? "";
                 }
 
                 var serverOnlineStatusField = statusEmbed.Fields.FirstOrDefault(f => f.Name == "Status");
