@@ -155,7 +155,5 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
         }
 
         _statusData.IpAddress = ipAddress.ToString() + ":27015";
-
-        Util.PrintLog(_statusData.IpAddress);
     }
 }
