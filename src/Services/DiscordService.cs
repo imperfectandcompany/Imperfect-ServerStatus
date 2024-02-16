@@ -175,7 +175,7 @@ namespace IGDiscord.Services
                     new EmbedField()
                     {
                         Name = "IP Address",
-                        Value = statusMessageInfo.IpAddress ?? "",
+                        Value = statusData.IpAddress ?? "",
                         Inline = true
                     }
                 }
@@ -221,7 +221,7 @@ namespace IGDiscord.Services
                 Type = 2,
                 Style = 5,
                 Label = "Connect to server",
-                Url = $"steam://connect/{statusMessageInfo.IpAddress}",
+                Url = "",
                 Disabled = false,
                 Emoji = new Emoji()
                 {
