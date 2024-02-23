@@ -60,7 +60,7 @@ namespace IGDiscord.Services
         {
             return new WebhookMessage
             {
-                Content = "",
+                Content = null,
                 //ActionRowComponents = new List<ActionRowComponent>()
                 //{
                 //    new ActionRowComponent()
@@ -153,12 +153,19 @@ namespace IGDiscord.Services
 
         private Embed CreateEmbed(StatusMessageInfo statusMessageInfo, StatusData statusData)
         {
+            var connectUrl = "";
+            if (statusData.IpAddress != null)
+            {
+                connectUrl = "https://cs2browser.com/connect/" + statusData.IpAddress;
+            }
+
             var embed = new Embed()
             {
                 Title = statusData.ServerName ?? "Server Name",
                 Description = "",
                 Type = "rich",
-                Url = "",
+                Url = connectUrl,
+                Color = 16724530,
                 Timestamp = DateTime.Now,
                 Fields = new List<EmbedField>(){
                     new EmbedField(){
@@ -171,15 +178,21 @@ namespace IGDiscord.Services
                         Name = "Map",
                         Value = statusData.MapName ?? "",
                         Inline = true
-                    },  
+                    },
                     new EmbedField()
                     {
                         Name = "IP Address",
                         Value = statusData.IpAddress ?? "",
                         Inline = true
+                    },
+                    new EmbedField()
+                    {
+                        Name = "Connect Link",
+                        Value = $"[Click me]({connectUrl})",
+
+                        Inline = true
                     }
                 }
-
             };
 
             return embed;
@@ -191,6 +204,14 @@ namespace IGDiscord.Services
             {
                 statusEmbed.Title = statusData.ServerName;
                 statusEmbed.Timestamp = statusData.Timestamp;
+                
+                
+                var connectUrl = "";
+                if (statusData.IpAddress != null)
+                {
+                    connectUrl = "https://cs2browser.com/connect/" + statusData.IpAddress;
+                }
+                statusEmbed.Url = connectUrl;
 
                 var mapNameField = statusEmbed.Fields.FirstOrDefault(f => f.Name == "Map");
 
@@ -214,6 +235,13 @@ namespace IGDiscord.Services
                     {
                         serverOnlineStatusField.Value = "Offline \uD83D\uDD34";
                     }
+                }
+
+                var connectLinkField = statusEmbed.Fields.FirstOrDefault(f => f.Name == "Connect Link");
+
+                if (connectLinkField != null)
+                {
+                    connectLinkField.Value = $"[Click me]({connectUrl})";
                 }
             }
 
