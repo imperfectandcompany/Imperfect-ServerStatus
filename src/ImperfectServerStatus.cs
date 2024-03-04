@@ -1,20 +1,20 @@
-﻿using IGDiscord.Models;
-using IGDiscord.Utils;
-using IGDiscord.Services.Interfaces;
+﻿using ImperfectServerStatus.Models;
+using ImperfectServerStatus.Utils;
+using ImperfectServerStatus.Services.Interfaces;
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.Logging;
 using CounterStrikeSharp.API;
-using IGDiscord.Models.Discord;
+using ImperfectServerStatus.Models.Discord;
 using System.Net;
 
-namespace IGDiscord;
+namespace ImperfectServerStatus;
 
-public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
+public partial class ImperfectServerStatus : BasePlugin, IPluginConfig<Config>
 {
-    public override string ModuleName => "IGDiscord";
+    public override string ModuleName => "Imperfect-ServerStatus";
     public override string ModuleVersion => "1.2.0";
     public override string ModuleAuthor => "raz";
-    public override string ModuleDescription => "A Discord webhook plugin for Imperfect Gamers";
+    public override string ModuleDescription => "A Discord server status plugin for Imperfect Gamers";
 
     public Config Config { get; set; }
     public string ConfigPath;
@@ -24,12 +24,12 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
 
     private readonly IConfigService _configService;
     private readonly IDiscordService _discordService;
-    private readonly ILogger<IGDiscord> _logger;
+    private readonly ILogger<ImperfectServerStatus> _logger;
 
-    public IGDiscord(
+    public ImperfectServerStatus(
         IConfigService configService,
         IDiscordService discordService,
-        ILogger<IGDiscord> logger)
+        ILogger<ImperfectServerStatus> logger)
     {
         _configService = configService;
         _discordService = discordService;

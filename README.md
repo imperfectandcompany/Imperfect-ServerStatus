@@ -1,3 +1,3 @@
-## Imperfect Gamers [IG] Discord Plugin
+## Imperfect Gamers [IG] - Server Status Plugin
 
-A plugin for interactions between the IG servers and Discord
+A CounterStrikeSharp plugin for posting and updating the status of a servers via a Discord webhook.

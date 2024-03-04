@@ -1,9 +1,9 @@
 ﻿using CounterStrikeSharp.API.Core;
-using IGDiscord.Models.Discord;
-using IGDiscord.Models.MessageInfo;
+using ImperfectServerStatus.Models.Discord;
+using ImperfectServerStatus.Models.MessageInfo;
 using System.Text.Json.Serialization;
 
-namespace IGDiscord.Models
+namespace ImperfectServerStatus.Models
 {
     public class Config : BasePluginConfig
     {

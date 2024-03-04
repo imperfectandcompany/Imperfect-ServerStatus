@@ -1,13 +1,13 @@
-﻿using IGDiscord.Models;
-using IGDiscord.Models.Discord;
-using IGDiscord.Models.MessageInfo;
+﻿using ImperfectServerStatus.Models;
+using ImperfectServerStatus.Models.Discord;
+using ImperfectServerStatus.Models.MessageInfo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IGDiscord.Services.Interfaces
+namespace ImperfectServerStatus.Services.Interfaces
 {
     public interface IDiscordService
     {

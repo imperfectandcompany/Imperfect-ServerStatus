@@ -1,4 +1,4 @@
-﻿namespace IGDiscord.Models.MessageInfo
+﻿namespace ImperfectServerStatus.Models.MessageInfo
 {
     public class MessageInfo
     {

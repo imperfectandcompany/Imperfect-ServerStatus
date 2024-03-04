@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IGDiscord.Helpers
+namespace ImperfectServerStatus.Helpers
 {
     public static class TextHelpers
     {

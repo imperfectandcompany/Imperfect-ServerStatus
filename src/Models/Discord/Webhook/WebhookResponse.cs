@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IGDiscord.Models.Discord
+namespace ImperfectServerStatus.Models.Discord
 {
     internal class WebhookResponse
     {

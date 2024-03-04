@@ -1,16 +1,16 @@
-﻿using IGDiscord.Models;
-using IGDiscord.Utils;
+﻿using ImperfectServerStatus.Models;
+using ImperfectServerStatus.Utils;
 using System.Text.Json;
-using IGDiscord.Services.Interfaces;
+using ImperfectServerStatus.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace IGDiscord.Services
+namespace ImperfectServerStatus.Services
 {
     public class ConfigService : IConfigService
     {
-        private readonly ILogger<IGDiscord> _logger;
+        private readonly ILogger<ImperfectServerStatus> _logger;
 
-        public ConfigService(ILogger<IGDiscord> logger)
+        public ConfigService(ILogger<ImperfectServerStatus> logger)
         {
             _logger = logger;
         }

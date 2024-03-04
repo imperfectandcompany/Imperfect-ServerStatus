@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace IGDiscord.Models.Discord
+namespace ImperfectServerStatus.Models.Discord
 {
     public class ActionRowComponent
     {

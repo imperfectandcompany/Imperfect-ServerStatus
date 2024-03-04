@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace IGDiscord.Helpers
+namespace ImperfectServerStatus.Helpers
 {
     public class SnakeCaseNamingPolicy : JsonNamingPolicy
     {

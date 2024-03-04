@@ -1,15 +1,15 @@
-﻿using IGDiscord.Helpers;
-using IGDiscord.Models;
-using IGDiscord.Models.Discord;
-using IGDiscord.Models.MessageInfo;
-using IGDiscord.Services.Interfaces;
-using IGDiscord.Utils;
+﻿using ImperfectServerStatus.Helpers;
+using ImperfectServerStatus.Models;
+using ImperfectServerStatus.Models.Discord;
+using ImperfectServerStatus.Models.MessageInfo;
+using ImperfectServerStatus.Services.Interfaces;
+using ImperfectServerStatus.Utils;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
-namespace IGDiscord.Services
+namespace ImperfectServerStatus.Services
 {
     public class DiscordService : IDiscordService
     {

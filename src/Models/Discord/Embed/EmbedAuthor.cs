@@ -1,4 +1,4 @@
-﻿namespace IGDiscord.Models.Discord
+﻿namespace ImperfectServerStatus.Models.Discord
 {
     public class EmbedAuthor
     {

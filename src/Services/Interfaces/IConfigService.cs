@@ -1,11 +1,11 @@
-﻿using IGDiscord.Models;
+﻿using ImperfectServerStatus.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IGDiscord.Services.Interfaces
+namespace ImperfectServerStatus.Services.Interfaces
 {
     public interface IConfigService
     {

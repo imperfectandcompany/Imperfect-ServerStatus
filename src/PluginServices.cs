@@ -1,11 +1,11 @@
-﻿namespace IGDiscord
+﻿namespace ImperfectServerStatus
 {
-    using global::IGDiscord.Services;
-    using global::IGDiscord.Services.Interfaces;
+    using global::ImperfectServerStatus.Services;
+    using global::ImperfectServerStatus.Services.Interfaces;
     using CounterStrikeSharp.API.Core;
     using Microsoft.Extensions.DependencyInjection;
 
-    public class PluginServices : IPluginServiceCollection<IGDiscord>
+    public class PluginServices : IPluginServiceCollection<ImperfectServerStatus>
     {
         public void ConfigureServices(IServiceCollection serviceCollection)
         {

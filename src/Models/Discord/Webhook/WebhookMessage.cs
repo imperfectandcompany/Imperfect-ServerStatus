@@ -1,4 +1,4 @@
-﻿using IGDiscord.Models.Discord;
+﻿using ImperfectServerStatus.Models.Discord;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace IGDiscord.Models.Discord
+namespace ImperfectServerStatus.Models.Discord
 {
     public class WebhookMessage
     {
