@@ -3,7 +3,6 @@ using ImperfectServerStatus.Models;
 using ImperfectServerStatus.Models.Discord;
 using ImperfectServerStatus.Models.MessageInfo;
 using ImperfectServerStatus.Services.Interfaces;
-using ImperfectServerStatus.Utils;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Headers;
 using System.Text;
@@ -208,8 +207,8 @@ namespace ImperfectServerStatus.Services
             {
                 statusEmbed.Title = statusData.ServerName;
                 statusEmbed.Timestamp = statusData.Timestamp;
-                
-                
+
+
                 var connectUrl = "";
                 if (statusData.IpAddress != null)
                 {

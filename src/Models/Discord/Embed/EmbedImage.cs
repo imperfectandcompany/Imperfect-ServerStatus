@@ -3,8 +3,8 @@
     public class EmbedImage
     {
         public string Url { get; set; }
-        
-        public string? ProxyUrl{ get; set; }
+
+        public string? ProxyUrl { get; set; }
 
         public int? Height { get; set; }
 

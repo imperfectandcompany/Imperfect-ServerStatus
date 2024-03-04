@@ -4,8 +4,8 @@
     {
         public string Text { get; set; } = "";
 
-        public  string? IconUrl { get; set; }
+        public string? IconUrl { get; set; }
 
-        public  string? ProxyIconUrl { get; set; }
+        public string? ProxyIconUrl { get; set; }
     }
 }

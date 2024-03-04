@@ -1,7 +1,4 @@
-﻿using System;
-using System.Text.Json;
-
-namespace ImperfectServerStatus.Utils
+﻿namespace ImperfectServerStatus.Utils
 {
     public static class Util
     {

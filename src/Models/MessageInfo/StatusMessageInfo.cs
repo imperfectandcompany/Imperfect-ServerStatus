@@ -1,6 +1,4 @@
-﻿using ImperfectServerStatus.Models.Discord;
-
-namespace ImperfectServerStatus.Models.MessageInfo
+﻿namespace ImperfectServerStatus.Models.MessageInfo
 {
     public class StatusMessageInfo : MessageInfo
     {

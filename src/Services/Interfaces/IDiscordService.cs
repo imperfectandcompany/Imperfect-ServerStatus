@@ -1,11 +1,6 @@
 ﻿using ImperfectServerStatus.Models;
 using ImperfectServerStatus.Models.Discord;
 using ImperfectServerStatus.Models.MessageInfo;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ImperfectServerStatus.Services.Interfaces
 {

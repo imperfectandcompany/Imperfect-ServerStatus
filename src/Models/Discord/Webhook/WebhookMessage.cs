@@ -1,10 +1,4 @@
-﻿using ImperfectServerStatus.Models.Discord;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace ImperfectServerStatus.Models.Discord
 {
@@ -14,7 +8,7 @@ namespace ImperfectServerStatus.Models.Discord
         public string? Content { get; set; }
 
         [JsonPropertyName("components")]
-        public List<ActionRowComponent> ActionRowComponents{ get; set; }
+        public List<ActionRowComponent> ActionRowComponents { get; set; }
 
         [JsonPropertyName("embeds")]
         public List<Embed> Embeds { get; set; }

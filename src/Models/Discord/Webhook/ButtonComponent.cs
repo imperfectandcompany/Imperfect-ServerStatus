@@ -10,7 +10,7 @@
 
         public Emoji Emoji { get; set; }
 
-        public string CustomId{ get; set; }
+        public string CustomId { get; set; }
 
         public string Url { get; set; }
 

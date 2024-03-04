@@ -1,8 +1,8 @@
 ﻿using ImperfectServerStatus.Models;
-using ImperfectServerStatus.Utils;
-using System.Text.Json;
 using ImperfectServerStatus.Services.Interfaces;
+using ImperfectServerStatus.Utils;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace ImperfectServerStatus.Services
 {

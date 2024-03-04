@@ -1,5 +1,4 @@
 ﻿using CounterStrikeSharp.API.Core;
-using ImperfectServerStatus.Models.Discord;
 using ImperfectServerStatus.Models.MessageInfo;
 using System.Text.Json.Serialization;
 

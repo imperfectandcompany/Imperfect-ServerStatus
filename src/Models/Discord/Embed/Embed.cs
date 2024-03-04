@@ -6,13 +6,13 @@
 
         public string? Type { get; set; } = "rich";
 
-        public string? Description  { get; set; }
+        public string? Description { get; set; }
 
         public string? Url { get; set; }
 
         public DateTime Timestamp { get; set; }
 
-        public int? Color  { get; set; }
+        public int? Color { get; set; }
 
         public EmbedFooter? Footer { get; set; }
 

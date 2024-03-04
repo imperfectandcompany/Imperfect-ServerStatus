@@ -1,10 +1,10 @@
-﻿using ImperfectServerStatus.Models;
-using ImperfectServerStatus.Utils;
-using ImperfectServerStatus.Services.Interfaces;
+﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using Microsoft.Extensions.Logging;
-using CounterStrikeSharp.API;
+using ImperfectServerStatus.Models;
 using ImperfectServerStatus.Models.Discord;
+using ImperfectServerStatus.Services.Interfaces;
+using ImperfectServerStatus.Utils;
+using Microsoft.Extensions.Logging;
 using System.Net;
 
 namespace ImperfectServerStatus;
@@ -84,7 +84,7 @@ public partial class ImperfectServerStatus : BasePlugin, IPluginConfig<Config>
             _logger.LogInformation("The config file did not load correctly. Please check that there is a {ModuleName}.json file in the CounterStrikeSharp config directory.", ModuleName);
         };
     }
-    
+
     public override void Unload(bool hotReload)
     {
         base.Unload(hotReload);
