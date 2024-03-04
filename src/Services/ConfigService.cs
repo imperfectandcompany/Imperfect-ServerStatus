@@ -1,18 +1,20 @@
-﻿using IGDiscord.Models.MessageInfo;
-using IGDiscord.Models;
+﻿using IGDiscord.Models;
 using IGDiscord.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using IGDiscord.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace IGDiscord.Services
 {
     public class ConfigService : IConfigService
     {
+        private readonly ILogger<IGDiscord> _logger;
+
+        public ConfigService(ILogger<IGDiscord> logger)
+        {
+            _logger = logger;
+        }
+
         public string GetConfigPath(string moduleDirectory, string moduleName)
         {
             string parentDirectory = string.Empty;
@@ -38,7 +40,7 @@ namespace IGDiscord.Services
             }
             else
             {
-                Util.PrintError("Error getting config path");
+                _logger.LogError("Error getting config path");
                 return string.Empty;
             }
         }
@@ -60,7 +62,7 @@ namespace IGDiscord.Services
             }
             catch (Exception ex)
             {
-                Util.PrintError($"Error updaating the config: {ex}");
+                _logger.LogError("Error updating the config: {message}", ex.Message);
             }
         }
     }

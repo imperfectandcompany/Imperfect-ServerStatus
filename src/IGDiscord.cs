@@ -1,14 +1,10 @@
-﻿using IGDiscord.Models.MessageInfo;
-using IGDiscord.Models;
+﻿using IGDiscord.Models;
 using IGDiscord.Utils;
 using IGDiscord.Services.Interfaces;
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.Logging;
 using CounterStrikeSharp.API;
 using IGDiscord.Models.Discord;
-using CounterStrikeSharp.API.Core.Attributes.Registration;
-using System.Threading;
-using static CounterStrikeSharp.API.Core.Listeners;
 using System.Net;
 
 namespace IGDiscord;
@@ -109,7 +105,7 @@ public partial class IGDiscord : BasePlugin, IPluginConfig<Config>
             }
             else
             {
-                Util.PrintError("Something went wrong getting a response when sending message.");
+                _logger.LogError("Something went wrong getting a response when sending message.");
             }
         });
     }

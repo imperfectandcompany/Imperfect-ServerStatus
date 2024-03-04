@@ -1,21 +1,25 @@
-﻿using CounterStrikeSharp.API.Core;
-using IGDiscord.Helpers;
+﻿using IGDiscord.Helpers;
 using IGDiscord.Models;
 using IGDiscord.Models.Discord;
 using IGDiscord.Models.MessageInfo;
 using IGDiscord.Services.Interfaces;
 using IGDiscord.Utils;
-using System.Net;
-using System.Net.Http;
+using Microsoft.Extensions.Logging;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using System.Xml.Linq;
 
 namespace IGDiscord.Services
 {
     public class DiscordService : IDiscordService
     {
+        private readonly ILogger<DiscordService> _logger;
+
+        public DiscordService(ILogger<DiscordService> logger)
+        {
+            _logger = logger;
+        }
+
         public async Task<string> CreateStatusMessageAsync(StatusMessageInfo messageInfo, WebhookMessage webhookMessage)
         {
             var serializeOptions = new JsonSerializerOptions
@@ -35,7 +39,7 @@ namespace IGDiscord.Services
             }
             else
             {
-                Util.PrintError("Something went wrong getting the response after posting the Discord message.");
+                _logger.LogError("Something went wrong getting the response after posting the Discord message.");
                 return string.Empty;
             }
         }
@@ -107,7 +111,7 @@ namespace IGDiscord.Services
             }
             catch (Exception ex)
             {
-                Util.PrintError($"Failed to send: {ex.Message}");
+                _logger.LogError("Failed to send: {message}", ex.Message);
             }
 
             return null;
@@ -127,7 +131,7 @@ namespace IGDiscord.Services
             }
             catch (Exception ex)
             {
-                Util.PrintError($"Failed to send: {ex.Message}");
+                _logger.LogError("Failed to send: {message}", ex.Message);
             }
         }
 
