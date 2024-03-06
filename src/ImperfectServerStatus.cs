@@ -6,17 +6,18 @@ using ImperfectServerStatus.Services.Interfaces;
 using ImperfectServerStatus.Utils;
 using Microsoft.Extensions.Logging;
 using System.Net;
+using System.Net.Http.Headers;
 
 namespace ImperfectServerStatus;
 
 public partial class ImperfectServerStatus : BasePlugin, IPluginConfig<Config>
 {
-    public override string ModuleName => "Imperfect-ServerStatus";
+    public override string ModuleName => "ImperfectServerStatus";
     public override string ModuleVersion => "1.3.0";
     public override string ModuleAuthor => "raz";
     public override string ModuleDescription => "A Discord server status plugin for Imperfect Gamers";
 
-    public Config Config { get; set; }
+    public Config Config { get; set; } = new();
     public string ConfigPath;
 
     public StatusData _statusData = new();
@@ -127,11 +128,9 @@ public partial class ImperfectServerStatus : BasePlugin, IPluginConfig<Config>
     {
         ConfigPath = _configService.GetConfigPath(ModuleDirectory, ModuleName);
 
-        if (File.Exists(ConfigPath) is false)
+        if (config.Version < Config.Version)
         {
-            Util.PrintLog($"Creating {ModuleName}.json for the first time. ");
-
-            config = new Config();
+            _logger.LogWarning("The config version does not match current version: Expected: {0} | Current: {1}", Config.Version, config.Version);
         }
 
         Config = config;
