@@ -10,7 +10,12 @@ namespace ImperfectServerStatus.Models
         /// Config version number
         /// </summary>
         [JsonPropertyName("ConfigVersion")]
-        public override int Version { get; set; } = 1;
+        public override int Version { get; set; } = 2;
+
+        /// <summary>
+        /// The server IP to display and create connect links to
+        /// </summary>
+        public string ServerIp { get; set; } = "";
 
         /// <summary>
         /// Server status message information
