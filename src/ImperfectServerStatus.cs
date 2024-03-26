@@ -7,6 +7,7 @@ using ImperfectServerStatus.Utils;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Reflection;
 
 namespace ImperfectServerStatus;
 
@@ -117,7 +118,13 @@ public partial class ImperfectServerStatus : BasePlugin, IPluginConfig<Config>
 
     public void OnConfigParsed(Config config)
     {
-        ConfigPath = _configService.GetConfigPath(ModuleDirectory, ModuleName);
+        string AssemblyName = Assembly.GetExecutingAssembly().GetName().Name ?? "";
+        ConfigPath = $"{Server.GameDirectory}/csgo/addons/counterstrikesharp/configs/plugins/{AssemblyName}/{AssemblyName}.json";
+
+        if (string.IsNullOrEmpty(AssemblyName))
+        {
+            _logger.LogWarning("There was an error getting the config path.");
+        }
 
         if (config.Version < Config.Version)
         {
@@ -128,7 +135,7 @@ public partial class ImperfectServerStatus : BasePlugin, IPluginConfig<Config>
 
         if (string.IsNullOrEmpty(config.ServerIp))
         {
-            _logger.LogWarning("Server IP is missing from config. Set a value to avoid issues with connection links.");
+            _logger.LogWarning("Server IP is missing from config. Set a value to create connection links and disply properly.");
         }
         else
         {

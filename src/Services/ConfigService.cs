@@ -1,4 +1,5 @@
-﻿using ImperfectServerStatus.Models;
+﻿using CounterStrikeSharp.API.Core;
+using ImperfectServerStatus.Models;
 using ImperfectServerStatus.Services.Interfaces;
 using ImperfectServerStatus.Utils;
 using Microsoft.Extensions.Logging;
@@ -13,36 +14,6 @@ namespace ImperfectServerStatus.Services
         public ConfigService(ILogger<ImperfectServerStatus> logger)
         {
             _logger = logger;
-        }
-
-        public string GetConfigPath(string moduleDirectory, string moduleName)
-        {
-            string parentDirectory = string.Empty;
-
-            var moduleDirectoryParent = Directory.GetParent(moduleDirectory);
-            if (moduleDirectoryParent != null)
-            {
-                var parentOfModuleDirectoryParent = Directory.GetParent(path: moduleDirectoryParent.FullName);
-                if (parentOfModuleDirectoryParent != null)
-                {
-                    parentDirectory = parentOfModuleDirectoryParent.FullName;
-                }
-            }
-
-            if (!string.IsNullOrEmpty(parentDirectory))
-            {
-                var configDir = Path.Combine(parentDirectory, $"configs/plugins/{moduleName}");
-
-                var configPath = Path.Combine(configDir, $"{moduleName}.json");
-
-                return configPath;
-
-            }
-            else
-            {
-                _logger.LogError("Error getting config path");
-                return string.Empty;
-            }
         }
 
         public void UpdateConfig(Config configData, string configPath)
