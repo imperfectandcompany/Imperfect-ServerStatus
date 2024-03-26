@@ -14,5 +14,6 @@ This plugin will send a JSON embed to the specified webhook URL containing the s
 ## Configuration
 After installation and the initial run, a configuration file will be created and placed into the `game/csgo/addons/counterstrikesharp/configs/plugins/ImperfectServerStatus/` directory.
 
+ - Add the server IP address into the JSON configuration file under `"ServerIp": ""`
  - Add your Discord webhook URL into the JSON configuration file under `"WebhookUri": ""`
  - Optionally you can add in a discord message ID or one will be created after adding the webhook URL and reloading the plugin or restarting the server.
