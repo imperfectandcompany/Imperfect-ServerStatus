@@ -1,5 +1,6 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Core.Attributes;
 using ImperfectServerStatus.Models;
 using ImperfectServerStatus.Models.Discord;
 using ImperfectServerStatus.Services.Interfaces;
@@ -11,6 +12,7 @@ using System.Reflection;
 
 namespace ImperfectServerStatus;
 
+[MinimumApiVersion(199)]
 public partial class ImperfectServerStatus : BasePlugin, IPluginConfig<Config>
 {
     public override string ModuleName => "Imperfect-ServerStatus";
