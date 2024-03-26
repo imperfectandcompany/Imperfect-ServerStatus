@@ -5,7 +5,7 @@ A CounterStrikeSharp plugin for posting and updating the status of a server via 
 This plugin will send a JSON embed to the specified webhook URL containing the server name, online/offline status, current map name and server IP address and a connect link. The server name and connect link with have a hyperlink to connect to the server using https://cs2browser.com/connect/##SERVER_IP_ADDRESS##
 
 ## Requirements
-- [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp)
+- [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp) - Version 199+
 
 ## Installation
 - Download the latest release from [here](https://github.com/razpbrry/Imperfect-ServerStatus/releases)
