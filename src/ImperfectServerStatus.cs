@@ -130,7 +130,7 @@ public partial class ImperfectServerStatus : BasePlugin, IPluginConfig<Config>
         {
             _logger.LogWarning("The config version does not match current version: Expected: {0} | Current: {1}", Config.Version, config.Version);
 
-            // TODO: Update config file to current version.
+            _configService.UpdateConfigToNewVersion(config, ConfigPath);
         }
 
         if (string.IsNullOrEmpty(config.ServerIp))
