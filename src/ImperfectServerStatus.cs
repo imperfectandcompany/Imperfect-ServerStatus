@@ -43,11 +43,6 @@ public partial class ImperfectServerStatus : BasePlugin, IPluginConfig<Config>
         _statusData.ServerName = hostName;
         _statusData.MapName = Server.MapName;
 
-        Task.Run(async () =>
-        {
-            await GetIpAddress();
-        });
-
         if (string.IsNullOrEmpty(Config.StatusInfo.MessageId))
         {
             CreateDiscordStatusMessage();
@@ -61,10 +56,6 @@ public partial class ImperfectServerStatus : BasePlugin, IPluginConfig<Config>
         _statusData.ServerOnline = true;
         _statusData.MapName = mapName;
 
-        Task.Run(async () =>
-        {
-            await GetIpAddress();
-        });
 
         UpdateDiscordStatusMessage();
     }
@@ -131,24 +122,19 @@ public partial class ImperfectServerStatus : BasePlugin, IPluginConfig<Config>
         if (config.Version < Config.Version)
         {
             _logger.LogWarning("The config version does not match current version: Expected: {0} | Current: {1}", Config.Version, config.Version);
+
+            // TODO: Update config file to current version.
+        }
+
+        if (string.IsNullOrEmpty(config.ServerIp))
+        {
+            _logger.LogWarning("Server IP is missing from config. Set a value to avoid issues with connection links.");
+        }
+        else
+        {
+            _statusData.IpAddress = config.ServerIp;
         }
 
         Config = config;
-    }
-
-    private async Task GetIpAddress()
-    {
-        using var httpClient = new HttpClient();
-
-        var dynDnsResponse = await httpClient.GetStringAsync("http://checkip.dyndns.org");
-
-        var dynDnsResponseTrimmed = dynDnsResponse.Split(':')[1].Split('<')[0].Trim();
-
-        if (!IPAddress.TryParse(dynDnsResponseTrimmed, out var ipAddress))
-        {
-            _statusData.IpAddress = "IP address not found";
-        }
-
-        _statusData.IpAddress = ipAddress.ToString() + ":27015";
     }
 }
