@@ -12,9 +12,9 @@ namespace ImperfectServerStatus;
 
 public partial class ImperfectServerStatus : BasePlugin, IPluginConfig<Config>
 {
-    public override string ModuleName => "ImperfectServerStatus";
-    public override string ModuleVersion => "1.3.0";
-    public override string ModuleAuthor => "raz";
+    public override string ModuleName => "Imperfect-ServerStatus";
+    public override string ModuleVersion => "1.4.0";
+    public override string ModuleAuthor => "Imperfect Gamers - raz";
     public override string ModuleDescription => "A Discord server status plugin for Imperfect Gamers";
 
     public Config Config { get; set; } = new();
