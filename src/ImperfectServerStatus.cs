@@ -1,12 +1,10 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Cvars;
 using ImperfectServerStatus.Models;
 using ImperfectServerStatus.Models.Discord;
 using ImperfectServerStatus.Services.Interfaces;
-using ImperfectServerStatus.Utils;
 using Microsoft.Extensions.Logging;
-using System.Net;
-using System.Net.Http.Headers;
 using System.Reflection;
 
 namespace ImperfectServerStatus;
@@ -14,9 +12,17 @@ namespace ImperfectServerStatus;
 public partial class ImperfectServerStatus : BasePlugin, IPluginConfig<Config>
 {
     public override string ModuleName => "Imperfect-ServerStatus";
-    public override string ModuleVersion => "1.4.0";
+    public override string ModuleVersion => "1.5.0";
     public override string ModuleAuthor => "Imperfect Gamers - raz";
     public override string ModuleDescription => "A Discord server status plugin for Imperfect Gamers";
+
+    // Define the FakeConVar for the IP address override
+    private FakeConVar<string> _imperfectStatusIp = new(
+        "imperfect_status_ip", // The ConVar name used on the command line
+        "Specifies the IP address override for ImperfectServerStatus plugin.",
+        "", // Default value (empty => fallback to config file)
+        ConVarFlags.FCVAR_NONE
+    );
 
     public Config Config { get; set; } = new();
     public string ConfigPath;
@@ -31,11 +37,82 @@ public partial class ImperfectServerStatus : BasePlugin, IPluginConfig<Config>
     public ImperfectServerStatus(
         IConfigService configService,
         IDiscordService discordService,
-        ILogger<ImperfectServerStatus> logger)
+        ILogger<ImperfectServerStatus> logger, 
+        string configPath, 
+        WebhookMessage webhookMessage)
     {
         _configService = configService;
         _discordService = discordService;
         _logger = logger;
+        ConfigPath = configPath;
+        _webhookMessage = webhookMessage;
+    }
+
+    public override void Load(bool hotReload)
+    {
+        // Register the FakeConVar so the engine sees it.
+        RegisterFakeConVars(GetType());
+
+        if (Config != null)
+        {
+            _statusData.Timestamp = DateTime.Now;
+            _webhookMessage = _discordService.CreateWebhookMessage(Config.StatusInfo, _statusData);
+
+            RegisterListener<Listeners.OnHostNameChanged>(OnHostNameChanged);
+            RegisterListener<Listeners.OnMapStart>(OnMapStart);
+        }
+        else
+        {
+            _logger.LogInformation(
+                "The config file did not load correctly. Please check that there is a {ModuleName}.json file in the CounterStrikeSharp config directory.",
+                ModuleName);
+        }
+    }
+
+    public override void Unload(bool hotReload)
+    {
+        base.Unload(hotReload);
+    }
+
+    public void OnConfigParsed(Config config)
+    {
+        string assemblyName = Assembly.GetExecutingAssembly().GetName().Name ?? "";
+        ConfigPath = $"{Server.GameDirectory}/csgo/addons/counterstrikesharp/configs/plugins/{assemblyName}/{assemblyName}.json";
+
+        if (config.Version < Config.Version)
+        {
+            _logger.LogWarning(
+                "The config version does not match current version: Expected: {0} | Current: {1}",
+                Config.Version, config.Version);
+            // TODO: Update config file to current version.
+        }
+
+        if (string.IsNullOrEmpty(config.ServerIp))
+        {
+            _logger.LogWarning(
+                "Server IP is missing from config. Set a value to create connection links and display properly."
+            );
+        }
+
+        // Apply config
+        Config = config;
+
+        // Check if the ConVar is set. If it has a non-empty value, override the IP:
+        string overrideIp = _imperfectStatusIp.Value?.Trim() ?? "";
+        if (!string.IsNullOrEmpty(overrideIp))
+        {
+            Config.ServerIp = overrideIp; // override the config with the ConVar
+            _logger.LogInformation(
+                "[ImperfectServerStatus] Overriding config.ServerIp with '{OverrideIp}' from imperfect_status_ip ConVar.",
+                overrideIp
+            );
+        }
+
+        // Pass the final IP into the status data if not null
+        if (!string.IsNullOrEmpty(Config.ServerIp))
+        {
+            _statusData.IpAddress = Config.ServerIp;
+        }
     }
 
     public void OnHostNameChanged(string hostName)
@@ -56,31 +133,7 @@ public partial class ImperfectServerStatus : BasePlugin, IPluginConfig<Config>
     {
         _statusData.ServerOnline = true;
         _statusData.MapName = mapName;
-
-
         UpdateDiscordStatusMessage();
-    }
-
-    public override void Load(bool hotReload)
-    {
-        if (Config != null)
-        {
-            _statusData.Timestamp = DateTime.Now;
-
-            _webhookMessage = _discordService.CreateWebhookMessage(Config.StatusInfo, _statusData);
-
-            RegisterListener<Listeners.OnHostNameChanged>(OnHostNameChanged);
-            RegisterListener<Listeners.OnMapStart>(OnMapStart);
-        }
-        else
-        {
-            _logger.LogInformation("The config file did not load correctly. Please check that there is a {ModuleName}.json file in the CounterStrikeSharp config directory.", ModuleName);
-        };
-    }
-
-    public override void Unload(bool hotReload)
-    {
-        base.Unload(hotReload);
     }
 
     private void CreateDiscordStatusMessage()
@@ -93,7 +146,6 @@ public partial class ImperfectServerStatus : BasePlugin, IPluginConfig<Config>
             if (!string.IsNullOrEmpty(messageId))
             {
                 Config.StatusInfo.MessageId = messageId;
-
                 _configService.UpdateConfig(Config, ConfigPath);
             }
             else
@@ -109,39 +161,8 @@ public partial class ImperfectServerStatus : BasePlugin, IPluginConfig<Config>
         Task.Run(async () =>
         {
             _statusData.Timestamp = DateTime.Now;
-
             WebhookMessage updatedWebhookMessage = _discordService.UpdateWebhookMessage(_webhookMessage, _statusData);
-
             await _discordService.UpdateStatusMessageAsync(Config.StatusInfo, updatedWebhookMessage);
         });
-    }
-
-    public void OnConfigParsed(Config config)
-    {
-        string AssemblyName = Assembly.GetExecutingAssembly().GetName().Name ?? "";
-        ConfigPath = $"{Server.GameDirectory}/csgo/addons/counterstrikesharp/configs/plugins/{AssemblyName}/{AssemblyName}.json";
-
-        if (string.IsNullOrEmpty(AssemblyName))
-        {
-            _logger.LogWarning("There was an error getting the config path.");
-        }
-
-        if (config.Version < Config.Version)
-        {
-            _logger.LogWarning("The config version does not match current version: Expected: {0} | Current: {1}", Config.Version, config.Version);
-
-            // TODO: Update config file to current version.
-        }
-
-        if (string.IsNullOrEmpty(config.ServerIp))
-        {
-            _logger.LogWarning("Server IP is missing from config. Set a value to create connection links and disply properly.");
-        }
-        else
-        {
-            _statusData.IpAddress = config.ServerIp;
-        }
-
-        Config = config;
     }
 }
